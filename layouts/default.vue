@@ -39,4 +39,7 @@ export default {
 .w-100 {
   width: 100%;
 }
+.text-bold {
+  font-weight: bold;
+}
 </style>

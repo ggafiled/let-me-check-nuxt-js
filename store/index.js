@@ -7,7 +7,17 @@ export const state = () => ({
   register: {
     firstName: "",
     lastName: "",
-    gender: 1
+    gender: 1,
+    email: "",
+    mobileNumber: "",
+    position: ""
+  },
+  profile: {
+    userId: "",
+    displayName: "",
+    pictureUrl: "",
+    statusMessage: "",
+    language: ""
   }
 });
 
@@ -17,6 +27,9 @@ export const getters = {
   },
   getDialog(state) {
     return state.dialog;
+  },
+  getProfile(state) {
+    return state.profile;
   }
 };
 
@@ -28,8 +41,14 @@ export const mutations = {
     };
   },
   SET_DIALOG(state, data) {
-    state.register = {
+    state.dialog = {
       ...state.dialog,
+      ...data
+    };
+  },
+  SET_LINE_PROFILE(state, data) {
+    state.profile = {
+      ...state.profile,
       ...data
     };
   }
@@ -37,9 +56,12 @@ export const mutations = {
 
 export const actions = {
   setRegister({ commit }, data) {
-    commit("SET_REGISTER", dat);
+    commit("SET_REGISTER", data);
   },
   setDialog({ commit }, data) {
     commit("SET_DIALOG", data);
+  },
+  setLineProfile({ commit }, data) {
+    commit("SET_LINE_PROFILE", data);
   }
 };

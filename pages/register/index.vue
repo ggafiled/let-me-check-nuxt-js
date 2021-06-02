@@ -13,6 +13,15 @@
         <v-col cols="12">
           <div class="text-center p-0">
             <img
+              v-if="pictureUrl"
+              :src="pictureUrl"
+              alt=""
+              srcset=""
+              width="155"
+              class="rounded-circle"
+            />
+            <img
+              v-else
               src="~/assets/placeholder.jpg"
               alt=""
               srcset=""
@@ -31,11 +40,13 @@
             <v-text-field
               v-model="form.firstName"
               label="Firstname"
+              autocomplete="off"
               required
             ></v-text-field>
             <v-text-field
               v-model="form.lastName"
               label="Lastname"
+              autocomplete="off"
               required
             ></v-text-field>
             <div class="gender-group d-flex">
@@ -125,7 +136,7 @@
               rounded
               color="primary"
               dark
-              class="w-100 mt-8"
+              class="w-100 mt-8 text-bold"
               @click="next()"
               >Next</v-btn
             >
@@ -141,10 +152,11 @@ export default {
   data() {
     return {
       errorMsg: "",
+      pictureUrl: this.$store.getters.getProfile.pictureUrl,
       form: {
-        firstName: "",
-        lastName: "",
-        gender: 1
+        firstName: this.$store.getters.getRegister.firstName,
+        lastName: this.$store.getters.getRegister.lastName,
+        gender: this.$store.getters.getRegister.gender
       }
     };
   },
@@ -163,7 +175,7 @@ export default {
         }
       });
       if (!valid) {
-        this.errorMsg = errors.map(err => err + "<br/>").join("");
+        this.errorMsg = errors.map(err => err).join("<br/>");
         this.$store.dispatch("setDialog", {
           isShow: true,
           title: "Form error",
@@ -178,7 +190,28 @@ export default {
         this.$store.dispatch("setRegister", this.form);
         this.$router.push("register/step2");
       }
+    },
+    runApp() {
+      liff
+        .getProfile()
+        .then(profile => {
+          this.$store.dispatch("setLineProfile", profile);
+        })
+        .catch(err => console.error(err));
     }
+  },
+  mounted() {
+    liff.init(
+      { liffId: "1656052121-D7zQjejk" },
+      () => {
+        if (liff.isLoggedIn()) {
+          this.runApp();
+        } else {
+          liff.login();
+        }
+      },
+      err => console.error(err.code, error.message)
+    );
   }
 };
 </script>
