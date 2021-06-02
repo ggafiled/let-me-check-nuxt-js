@@ -13,8 +13,8 @@
         <v-col cols="12">
           <div class="text-center p-0">
             <img
-              v-if="pictureUrl"
-              :src="pictureUrl"
+              v-if="getProfile.pictureUrl"
+              :src="getProfile.pictureUrl"
               alt=""
               srcset=""
               width="155"
@@ -31,7 +31,13 @@
           </div>
         </v-col>
         <v-col cols="12">
-          <div class="p-0 text-center text-capitalize">
+          <div
+            v-if="getProfile.displayName"
+            class="p-0 text-center text-capitalize"
+          >
+            {{ getProfile.displayName }}
+          </div>
+          <div v-else class="p-0 text-center text-capitalize">
             Display name
           </div>
         </v-col>
@@ -152,7 +158,6 @@ export default {
   data() {
     return {
       errorMsg: "",
-      pictureUrl: this.$store.getters.getProfile.pictureUrl,
       form: {
         firstName: this.$store.getters.getRegister.firstName,
         lastName: this.$store.getters.getRegister.lastName,
@@ -195,9 +200,15 @@ export default {
       liff
         .getProfile()
         .then(profile => {
+          console.log(profile);
           this.$store.dispatch("setLineProfile", profile);
         })
         .catch(err => console.error(err));
+    }
+  },
+  computed: {
+    getProfile() {
+      return this.$store.getters.getProfile;
     }
   },
   mounted() {
