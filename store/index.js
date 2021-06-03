@@ -126,6 +126,11 @@ export const actions = {
                     })
                 );
 
+                commit("initialiseStore", {
+                    userID: this.state.profile.userId,
+                    auth: true
+                });
+
                 console.log(
                     JSON.stringify(this.$auth.$storage.getLocalStorage("authenticated"))
                 );
