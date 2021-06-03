@@ -89,9 +89,9 @@ export const mutations = {
         };
     },
     initialiseStore(state) {
-        if (this.$auth.$storage.getLocalStorage("authenticated")) {
+        if (this.$auth.$storage.getLocalStorage("auth.authenticated")) {
             const { userId, auth } = JSON.parse(
-                this.$auth.$storage.getLocalStorage("authenticated")
+                this.$auth.$storage.getLocalStorage("auth.authenticated")
             );
             state.authenticated.userId = userId;
             state.authenticated.auth = auth;
@@ -126,10 +126,9 @@ export const actions = {
                     })
                 );
 
-                console.log({
-                    userID: this.state.profile.userId,
-                    auth: true
-                });
+                console.log(
+                    JSON.parse(this.$auth.$storage.getLocalStorage("auth.authenticated"))
+                );
             }
         } catch (e) {
             commit("SET_DIALOG", {
