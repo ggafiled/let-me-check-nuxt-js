@@ -89,11 +89,13 @@ export const mutations = {
         };
     },
     initialiseStore(state) {
-        const { userId, auth } = JSON.parse(
-            this.$auth.$storage.getUniversal(authenticated)
-        );
-        state.authenticated.userId = userId;
-        state.authenticated.auth = auth;
+        if (this.$auth.$storage.getLocalStorage("authenticated")) {
+            const { userId, auth } = JSON.parse(
+                this.$auth.$storage.getLocalStorage("authenticated")
+            );
+            state.authenticated.userId = userId;
+            state.authenticated.auth = auth;
+        }
     }
 };
 
@@ -116,7 +118,7 @@ export const actions = {
             if (snapshot.exists()) {
                 commit("SET_REGISTER", snapshot.val());
                 // TO DO
-                this.$auth.$storage.setUniversal(
+                this.$auth.$storage.setLocalStorage(
                     "authenticated",
                     JSON.stringify({
                         userID: this.state.profile.userId,
