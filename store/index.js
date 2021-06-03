@@ -89,7 +89,9 @@ export const mutations = {
         };
     },
     initialiseStore(state) {
-        const { userId, auth } = JSON.parse(window.localStorage.authenticated);
+        const { userId, auth } = JSON.parse(
+            this.$auth.$storage.getUniversal(authenticated)
+        );
         state.authenticated.userId = userId;
         state.authenticated.auth = auth;
     }
@@ -114,10 +116,14 @@ export const actions = {
             if (snapshot.exists()) {
                 commit("SET_REGISTER", snapshot.val());
                 // TO DO
-                window.localStorage.authenticated = JSON.stringify({
-                    userID: this.state.profile.userId,
-                    auth: true
-                });
+                this.$auth.$storage.setUniversal(
+                    "authenticated",
+                    JSON.stringify({
+                        userID: this.state.profile.userId,
+                        auth: true
+                    })
+                );
+
                 console.log({
                     userID: this.state.profile.userId,
                     auth: true
