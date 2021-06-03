@@ -5,5 +5,7 @@ export default function({ store, redirect }) {
     store.state.localStorage.authenticated.userId
   ) {
     return redirect("/myshop");
+  } else {
+    return;
   }
 }
