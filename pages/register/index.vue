@@ -155,14 +155,10 @@
 
 <script>
 export default {
+  middleware: ["RedirectToShop"],
   data() {
     return {
-      errorMsg: "",
-      form: {
-        firstName: this.$store.getters.getRegister.firstName,
-        lastName: this.$store.getters.getRegister.lastName,
-        gender: this.$store.getters.getRegister.gender
-      }
+      errorMsg: ""
     };
   },
   methods: {
@@ -195,34 +191,15 @@ export default {
         this.$store.dispatch("setRegister", this.form);
         this.$router.push("register/step2");
       }
-    },
-    runApp() {
-      liff
-        .getProfile()
-        .then(profile => {
-          console.log(profile);
-          this.$store.dispatch("setLineProfile", profile);
-        })
-        .catch(err => console.error(err));
     }
   },
   computed: {
     getProfile() {
       return this.$store.getters.getProfile;
+    },
+    form() {
+      return this.$store.getters.getRegister;
     }
-  },
-  mounted() {
-    liff.init(
-      { liffId: "1656052121-D7zQjejk" },
-      () => {
-        if (liff.isLoggedIn()) {
-          this.runApp();
-        } else {
-          liff.login();
-        }
-      },
-      err => console.error(err.code, error.message)
-    );
   }
 };
 </script>

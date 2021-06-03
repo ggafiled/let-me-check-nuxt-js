@@ -57,6 +57,7 @@
 
 <script>
 export default {
+  middleware: ["RedirectToShop"],
   data() {
     return {
       errorMsg: "",
@@ -70,13 +71,13 @@ export default {
       mobileNumberRules: [
         v => !!v || "Mobile Number is required",
         v => /0[0-9]{8,9}$/i.test(v) || "Mobile Number must be valid"
-      ],
-      form: {
-        email: this.$store.getters.getRegister.email,
-        mobileNumber: this.$store.getters.getRegister.mobileNumber,
-        position: this.$store.getters.getRegister.position
-      }
+      ]
     };
+  },
+  computed: {
+    form() {
+      return this.$store.getters.getRegister;
+    }
   },
   methods: {
     isNumber: function(evt) {

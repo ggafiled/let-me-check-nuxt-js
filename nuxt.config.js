@@ -19,6 +19,11 @@ export default {
         rel: "stylesheet",
         href:
           "https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap"
+      },
+      {
+        rel: "stylesheet",
+        href:
+          "https://fonts.googleapis.com/css2?family=Athiti:wght@200;400&display=swap"
       }
     ],
     script: [{ src: "https://static.line-scdn.net/liff/edge/2/sdk.js" }]
@@ -61,6 +66,15 @@ export default {
           storage: true,
           database: true
         }
+      }
+    ],
+    ["nuxt-material-design-icons"],
+    [
+      "nuxt-vuex-localstorage",
+      {
+        mode: "cookie",
+        expireHours: 24,
+        localStorage: ["localStorage"]
       }
     ]
   ],
