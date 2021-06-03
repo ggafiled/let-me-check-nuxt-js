@@ -127,7 +127,7 @@ export const actions = {
                 );
 
                 console.log(
-                    JSON.parse(this.$auth.$storage.getLocalStorage("authenticated"))
+                    JSON.stringify(this.$auth.$storage.getLocalStorage("authenticated"))
                 );
             }
         } catch (e) {
