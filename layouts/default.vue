@@ -36,6 +36,9 @@ export default {
       },
       err => console.error(err.code, error.message)
     );
+  },
+  beforeCreate() {
+    this.$store.commit("initialiseStore");
   }
 };
 </script>

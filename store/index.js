@@ -4,6 +4,10 @@ export const state = () => ({
     title: "",
     message: ""
   },
+  authenticated: {
+    userId: "",
+    auth: false
+  },
   register: {
     firstName: "",
     lastName: "",
@@ -84,6 +88,11 @@ export const mutations = {
       ...state.thaichana,
       ...data
     };
+  },
+  initialiseStore(state) {
+    const { userId, auth } = JSON.parse(localStorage.getItem("authenticated"));
+    state.authenticated.userId = userId;
+    state.authenticated.auth = auth;
   }
 };
 
@@ -106,10 +115,13 @@ export const actions = {
       if (snapshot.exists()) {
         commit("SET_REGISTER", snapshot.val());
         // TO DO
-        commit("localStorage/SET_AUTH", {
-          userID: this.state.profile.userId,
-          auth: true
-        });
+        localStorage.setItem(
+          "authenticated",
+          JSON.stringify({
+            userID: this.state.profile.userId,
+            auth: true
+          })
+        );
         console.log({
           userID: this.state.profile.userId,
           auth: true
