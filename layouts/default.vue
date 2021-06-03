@@ -12,31 +12,7 @@ export default {
   data() {
     return {};
   },
-  methods: {
-    runApp() {
-      liff
-        .getProfile()
-        .then(profile => {
-          console.log(profile);
-          this.$store.dispatch("setLineProfile", profile);
-          this.$store.dispatch("checkIsRegisted");
-        })
-        .catch(err => console.error(err));
-    }
-  },
-  mounted() {
-    liff.init(
-      { liffId: "1656052121-D7zQjejk" },
-      () => {
-        if (liff.isLoggedIn()) {
-          this.runApp();
-        } else {
-          liff.login();
-        }
-      },
-      err => console.error(err.code, error.message)
-    );
-  }
+  methods: {}
 };
 </script>
 
