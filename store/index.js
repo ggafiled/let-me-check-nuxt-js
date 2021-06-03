@@ -89,12 +89,12 @@ export const mutations = {
         };
     },
     initialiseStore(state) {
-        if (this.$auth.$storage.getLocalStorage("auth.authenticated")) {
+        if (this.$auth.$storage.getLocalStorage("authenticated")) {
             const { userId, auth } = JSON.parse(
-                this.$auth.$storage.getLocalStorage("auth.authenticated")
+                this.$auth.$storage.getLocalStorage("authenticated")
             );
             state.authenticated.userId = userId;
-            state.authenticated.auth = auth;
+            state.authenticated.auth = Boolean(auth);
         }
     }
 };
@@ -127,7 +127,7 @@ export const actions = {
                 );
 
                 console.log(
-                    JSON.parse(this.$auth.$storage.getLocalStorage("auth.authenticated"))
+                    JSON.parse(this.$auth.$storage.getLocalStorage("authenticated"))
                 );
             }
         } catch (e) {
