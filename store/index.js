@@ -90,7 +90,9 @@ export const mutations = {
     };
   },
   initialiseStore(state) {
-    const { userId, auth } = JSON.parse(localStorage.getItem("authenticated"));
+    const { userId, auth } = JSON.parse(
+      window.localStorage.getItem("authenticated")
+    );
     state.authenticated.userId = userId;
     state.authenticated.auth = auth;
   }
@@ -115,7 +117,7 @@ export const actions = {
       if (snapshot.exists()) {
         commit("SET_REGISTER", snapshot.val());
         // TO DO
-        localStorage.setItem(
+        window.localStorage.setItem(
           "authenticated",
           JSON.stringify({
             userID: this.state.profile.userId,
