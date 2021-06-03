@@ -91,7 +91,7 @@ export const mutations = {
     initialiseStore(state) {
         if (this.$auth.$storage.getLocalStorage("authenticated")) {
             const { userId, auth } = JSON.parse(
-                this.$auth.$storage.getLocalStorage("authenticated")
+                JSON.stringify(this.$auth.$storage.getLocalStorage("authenticated"))
             );
             state.authenticated.userId = userId;
             state.authenticated.auth = Boolean(auth);
