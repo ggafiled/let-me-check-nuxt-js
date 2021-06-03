@@ -14,9 +14,15 @@
     "firebase": "^8.6.3",
     "nuxt": "^2.15.3",
     "nuxt-material-design-icons": "^1.0.4",
-    "nuxt-vuex-localstorage": "^1.3.0"
+    "nuxt-vuex-localstorage": "^1.3.0",
+    "vue-loader": "^15.9.7",
+    "vuetify-loader": "^1.7.2"
   },
   "devDependencies": {
-    "@nuxtjs/vuetify": "^1.11.3"
+    "@nuxtjs/vuetify": "^1.11.3",
+    "fibers": "^5.0.0",
+    "sass": "^1.34.1",
+    "sass-loader": "^10.2.0",
+    "webpack": "^4.46.0"
   }
 }
