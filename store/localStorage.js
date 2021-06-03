@@ -16,6 +16,12 @@ export const mutations = {
 
 export const actions = {
   setAuthenticated({ commit }, data) {
+    this.$cookies.set("userId", data.userId, {
+      path: "/"
+    });
+    this.$cookies.set("auth", data.auth, {
+      path: "/"
+    });
     commit("SET_AUTH", data);
   }
 };

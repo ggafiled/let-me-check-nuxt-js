@@ -110,6 +110,10 @@ export const actions = {
           userID: this.state.profile.userId,
           auth: true
         });
+        console.log({
+          userID: this.state.profile.userId,
+          auth: true
+        });
       }
     } catch (e) {
       commit("SET_DIALOG", {

@@ -1,9 +1,6 @@
-export default function({ store, redirect }) {
+export default function({ store, redirect, app }) {
   // If the user is not authenticated
-  if (
-    store.state.localStorage.authenticated.auth &&
-    store.state.localStorage.authenticated.userId
-  ) {
+  if (app.$cookies.get("auth") && app.$cookies.get("userId")) {
     return redirect("/myshop");
   } else {
     return;

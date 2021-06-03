@@ -70,11 +70,10 @@ export default {
     [
       "nuxt-vuex-localstorage",
       {
-        mode: "cookie",
-        expireHours: 24,
         localStorage: ["localStorage"]
       }
-    ]
+    ],
+    ["cookie-universal-nuxt", { alias: "cookiz" }]
   ],
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
