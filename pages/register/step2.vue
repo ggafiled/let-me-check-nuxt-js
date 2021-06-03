@@ -57,7 +57,6 @@
 
 <script>
 export default {
-  middleware: ["RedirectToShop"],
   data() {
     return {
       errorMsg: "",
