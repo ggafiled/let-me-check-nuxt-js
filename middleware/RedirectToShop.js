@@ -1,8 +1,8 @@
 export default function({ store, redirect, app }) {
-  // If the user is not authenticated
-  if (window.localStorage.getItem("authenticated")) {
-    return redirect("/myshop");
-  } else {
-    return;
-  }
+    // If the user is not authenticated
+    if (window.localStorage.authenticated) {
+        return redirect("/myshop");
+    } else {
+        return;
+    }
 }
