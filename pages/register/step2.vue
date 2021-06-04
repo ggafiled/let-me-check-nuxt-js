@@ -139,20 +139,18 @@ export default {
           .set(this.$store.getters.getRegister);
         console.log("Registed");
         liff
-              .sendMessages([
-                {
-                  type: "text",
-                  text:
-                    "ลงทะเบียนเรียบร้อย ท่านสามารถเพิ่มร้านค้าได้แล้วตอนนี้"
-                }
-              ])
-              .then(() => {
-                console.log("message sent");
-              })
-              .catch(err => {
-                console.log("error", err);
-              });
-          }
+          .sendMessages([
+            {
+              type: "text",
+              text: "ลงทะเบียนเรียบร้อย ท่านสามารถเพิ่มร้านค้าได้แล้วตอนนี้"
+            }
+          ])
+          .then(() => {
+            console.log("message sent");
+          })
+          .catch(err => {
+            console.log("error", err);
+          });
         this.$router.push("/register/done");
       }
     },
