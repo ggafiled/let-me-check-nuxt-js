@@ -100,7 +100,7 @@ export default {
   methods: {
     extractUriParams(uri) {
       let params = (
-        uri.search.match(new RegExp("([^?=&]+)(=([^&]*))?", "g")) || []
+        uri.match(new RegExp("([^?=&]+)(=([^&]*))?", "g")) || []
       ).reduce(function(result, each, n, every) {
         let [key, value] = each.split("=");
         result[key] = value;
@@ -125,8 +125,8 @@ export default {
         });
       try {
         liff.scanCode().then(result => {
-          const { appId, shopId } = this.extractUriParams(result);
-          if (!appId.length || !shopId.length) {
+          var { appId, shopId } = this.extractUriParams(result);
+          if (appId.trim() == "" || shopId.trim() == "") {
             this.$store.dispatch("setDialog", {
               isShow: true,
               title: "Form error",
