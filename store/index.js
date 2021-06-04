@@ -18,27 +18,12 @@ export const state = () => ({
   },
   thaichana: {
     myshop: [
-      { header: "History" },
       {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/1.jpg",
-        title: "Brunch this weekend?",
-        subtitle: `<span class="text--primary">Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this weekend. Do you want to hang out?`
-      },
-      { divider: true, inset: true },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
-        title: 'Summer BBQ <span class="grey--text text--lighten-1">4</span>',
-        subtitle: `<span class="text--primary">to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of town this weekend.`
-      },
-      { divider: true, inset: true },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
-        title: "Oui oui",
-        subtitle:
-          '<span class="text--primary">Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you ever been?'
+        appId: "0001",
+        title: "กองทหารพลาธิการ กองพลทหารราบที่ 3",
+        shopId: "DSDSDS211DDD4FD4F6F4DS2F1DSFDF323"
       }
-    ],
-    history: []
+    ]
   },
   profile: {
     userId: "",
@@ -84,8 +69,8 @@ export const mutations = {
     };
   },
   SET_THAICHANA(state, data) {
-    state.thaichana = {
-      ...state.thaichana,
+    state.thaichana.myshop = {
+      ...state.thaichana.myshop,
       ...data
     };
   },
@@ -159,6 +144,22 @@ export const actions = {
       if (snapshot.exists()) {
         commit("SET_THAICHANA", snapshot.val());
       }
+    } catch (e) {
+      commit("SET_DIALOG", {
+        isShow: true,
+        title: "Thaichana history error",
+        message: e.message
+      });
+      return;
+    }
+  },
+  async setThaichanaShop({ commit, dispatch }, data) {
+    const thaichanaUserRef = this.$fire.database.ref(
+      "/member/thaichana/" + this.state.profile.userId
+    );
+    try {
+      thaichanaUserRef.set(data);
+      dispatch("getThaichana");
     } catch (e) {
       commit("SET_DIALOG", {
         isShow: true,

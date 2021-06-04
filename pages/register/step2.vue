@@ -149,6 +149,11 @@ export default {
     if (this.$auth.$storage.getLocalStorage("authenticated")) {
       this.$router.push("/myshop");
     }
+  },
+  head() {
+    return {
+      title: "Register Profile"
+    };
   }
 };
 </script>

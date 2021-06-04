@@ -36,27 +36,16 @@
         <v-list three-line>
           <template v-for="(item, index) in getThaichana.myshop">
             <v-subheader
-              v-if="item.header"
-              :key="item.header"
-              v-text="item.header"
+              v-if="item.title"
+              :key="index"
+              v-text="item.title"
             ></v-subheader>
 
-            <v-divider
-              v-else-if="item.divider"
-              :key="index"
-              :inset="item.inset"
-            ></v-divider>
+            <v-divider :key="index"></v-divider>
 
-            <v-list-item v-else :key="item.title">
-              <v-list-item-avatar>
-                <v-img :src="item.avatar"></v-img>
-              </v-list-item-avatar>
-
+            <v-list-item :key="item.title">
               <v-list-item-content>
                 <v-list-item-title v-html="item.title"></v-list-item-title>
-                <v-list-item-subtitle
-                  v-html="item.subtitle"
-                ></v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </template>
@@ -70,7 +59,7 @@
               color="primary"
               dark
               class="w-100 text-bold"
-              @click="next()"
+              @click="scanToAddShop()"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -117,6 +106,33 @@ export default {
     }
   },
   methods: {
+    extractUriParams(uri) {
+      let params = (
+        url.search.match(new RegExp("([^?=&]+)(=([^&]*))?", "g")) || []
+      ).reduce(function(result, each, n, every) {
+        let [key, value] = each.split("=");
+        result[key] = value;
+        return result;
+      }, {});
+      return params;
+    },
+    scanToAddShop() {
+      if (liff.scanCode) {
+        liff.scanCode().then(result => {
+          const { appId, shopId } = this.extractUriParams(result);
+          if (!appId.length || !shopId.length) {
+            // TO DO ACTIONS IF INCORRECT FORMAT
+          } else {
+          }
+        });
+      } else {
+        this.$store.dispatch("setDialog", {
+          isShow: true,
+          title: "Liff module error",
+          message: "Can't open camera. seems liff library has problem."
+        });
+      }
+    },
     close() {
       liff.closeWindow();
     }
@@ -125,6 +141,11 @@ export default {
     if (!this.$auth.$storage.getLocalStorage("authenticated")) {
       this.$router.push("/register");
     }
+  },
+  head() {
+    return {
+      title: "My Shop"
+    };
   }
 };
 </script>
