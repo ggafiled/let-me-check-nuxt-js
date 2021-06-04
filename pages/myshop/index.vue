@@ -149,6 +149,13 @@ export default {
               title: "Success",
               message: `ระบบได้ทำการบันทึกร้านค้า ${shopName} ให้แล้วค่ะ`
             });
+
+            liff.sendMessages([
+              {
+                type: "text",
+                text: `ระบบได้ทำการบันทึกร้านค้า ${shopName} ให้แล้วค่ะ`
+              }
+            ]);
           }
         });
       } catch (e) {
