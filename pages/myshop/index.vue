@@ -124,22 +124,23 @@ export default {
           console.log("error", err);
         });
       try {
+        var vm = this;
         liff.scanCode().then(result => {
-          var { appId, shopId } = this.extractUriParams(result);
+          var { appId, shopId } = vm.extractUriParams(result);
           if (appId.trim() == "" || shopId.trim() == "") {
-            this.$store.dispatch("setDialog", {
+            vm.$store.dispatch("setDialog", {
               isShow: true,
               title: "Form error",
               message: "Incorrect shop format on thaichana platform."
             });
           } else {
-            this.$store.dispatch("setThaichanaShop", {
+            vm.$store.dispatch("setThaichanaShop", {
               appId: appId,
               shopId: shopId,
               title: "The Mall Korat (เดอะมอล์ โครราช)"
             });
 
-            this.$store.dispatch("setDialog", {
+            vm.$store.dispatch("setDialog", {
               isShow: true,
               title: "Success",
               message: `ระบบได้ทำการบันทึกร้านค้า ${appId} The Mall Korat (เดอะมอล์ โครราช) ให้แล้วค่ะ`
