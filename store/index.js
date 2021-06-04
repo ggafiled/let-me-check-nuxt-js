@@ -64,7 +64,6 @@ export const mutations = {
   },
   SET_THAICHANA(state, data) {
     state.thaichana.myshop = {
-      ...state.thaichana.myshop,
       ...data
     };
   },
