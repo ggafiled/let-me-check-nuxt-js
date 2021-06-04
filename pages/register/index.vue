@@ -200,6 +200,14 @@ export default {
     form() {
       return this.$store.getters.getRegister;
     }
+  },
+  mounted() {
+    if (
+      store.state.authenticated.userId.length &&
+      store.state.authenticated.auth
+    ) {
+      return redirect("/myshop");
+    }
   }
 };
 </script>
