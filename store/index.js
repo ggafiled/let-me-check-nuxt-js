@@ -17,7 +17,17 @@ export const state = () => ({
     position: ""
   },
   thaichana: {
-    myshop: []
+    myshop: [
+      {
+        appId: "0001",
+        businessType: "หน่วยงานและสถานที่ราชการ",
+        canCheckin: true,
+        shopId: "SMWY5Nzk0MDk2MmUxNDI1NDllZGFkYzkxMDdmZGMxNzEwMDAwMDI4MTYz",
+        status: "VALIDATED",
+        subcategory: "08_ECONOMICS_G5_04",
+        title: "กองทหารพลาธิการกองพลทหารราบที่ 3"
+      }
+    ]
   },
   profile: {
     userId: "",
@@ -64,6 +74,7 @@ export const mutations = {
   },
   SET_THAICHANA(state, data) {
     state.thaichana.myshop = {
+      ...state.thaichana.myshop,
       ...data
     };
   },
