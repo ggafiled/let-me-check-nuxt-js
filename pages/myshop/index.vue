@@ -98,7 +98,7 @@ export default {
     }
   },
   methods: {
-    extractUriParams(uri) {
+    async extractUriParams(uri) {
       let params = (
         url.search.match(new RegExp("([^?=&]+)(=([^&]*))?", "g")) || []
       ).reduce(function(result, each, n, every) {
