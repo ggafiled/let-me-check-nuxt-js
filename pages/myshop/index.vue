@@ -85,6 +85,7 @@
 </template>
 
 <script>
+import liff from "@line/liff";
 export default {
   // middleware: ["IsAuthenticated"],
   data() {
@@ -100,7 +101,7 @@ export default {
   methods: {
     extractUriParams(uri) {
       let params = (
-        url.search.match(new RegExp("([^?=&]+)(=([^&]*))?", "g")) || []
+        uri.search.match(new RegExp("([^?=&]+)(=([^&]*))?", "g")) || []
       ).reduce(function(result, each, n, every) {
         let [key, value] = each.split("=");
         result[key] = value;

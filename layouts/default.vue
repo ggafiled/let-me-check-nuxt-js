@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import liff from "@line/liff";
 import Dialog from "~/components/Dialog";
 export default {
   components: { Dialog },
