@@ -92,7 +92,7 @@ export default {
       errorMsg: ""
     };
   },
-  watch: {
+  computed: {
     getThaichana() {
       return this.$store.getters.getThaichana;
     }
