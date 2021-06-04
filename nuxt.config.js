@@ -23,7 +23,8 @@ export default {
         href:
           "https://fonts.googleapis.com/css2?family=Athiti:wght@200;400&display=swap"
       }
-    ]
+    ],
+    script: [{ src: "https://static.line-scdn.net/liff/edge/2/sdk.js" }]
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
