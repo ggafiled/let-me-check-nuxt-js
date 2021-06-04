@@ -24,7 +24,7 @@ export default {
         .catch(err => console.error(err));
     }
   },
-  beforeCreate() {
+  created() {
     liff.init(
       { liffId: "1656052121-D7zQjejk" },
       () => {
