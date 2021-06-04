@@ -36,13 +36,12 @@
         <v-list three-line>
           <v-subheader v-text="History"></v-subheader>
           <template v-for="(item, index) in getThaichana.myshop">
-            <v-divider :key="index"></v-divider>
-
             <v-list-item :key="item.title">
               <v-list-item-content>
                 <v-list-item-title v-html="item.title"></v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-divider :key="index"></v-divider>
           </template>
         </v-list>
       </v-row>
