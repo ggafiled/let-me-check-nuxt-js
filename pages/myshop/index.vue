@@ -149,7 +149,7 @@ export default {
           vm.$store.dispatch("setDialog", {
             isShow: true,
             title: "Success",
-            message: `${result}`
+            message: `${JSON.stringify(result)}`
           });
         });
       } catch (e) {
