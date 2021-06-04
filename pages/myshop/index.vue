@@ -111,7 +111,7 @@ export default {
     scanToAddShop() {
       try {
         var vm = this;
-        liff.scanCode().then(result => {
+        liff.scanCode().then(async result => {
           var { appId, shopId } = vm.extractUriParams(result.value);
           if (appId.trim() == "" || shopId.trim() == "") {
             vm.$store.dispatch("setDialog", {
@@ -126,12 +126,12 @@ export default {
               businessType,
               canCheckin,
               status
-            } = vm.$store.dispatch("getThaichanaShopNameByToken", {
+            } = await vm.$store.dispatch("getThaichanaShopNameByToken", {
               appId: appId,
               shopId: shopId
             });
 
-            vm.$store.dispatch("setThaichanaShop", {
+            await vm.$store.dispatch("setThaichanaShop", {
               appId: appId,
               shopId: shopId,
               title: shopName,
