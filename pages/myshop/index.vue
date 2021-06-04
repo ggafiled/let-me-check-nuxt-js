@@ -138,6 +138,11 @@ export default {
               .catch(err => {
                 console.log("error", err);
               });
+            this.$store.dispatch("setDialog", {
+              isShow: true,
+              title: "Success",
+              message: `ระบบได้ทำการบันทึกร้านค้า ${appId} The Mall Korat (เดอะมอล์ โครราช) ให้แล้วค่ะ`
+            });
           }
         });
       } catch (e) {
