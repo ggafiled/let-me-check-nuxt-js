@@ -155,7 +155,7 @@
 
 <script>
 export default {
-  middleware: ["RedirectToShop"],
+  // middleware: ["RedirectToShop"],
   data() {
     return {
       errorMsg: ""
@@ -202,10 +202,7 @@ export default {
     }
   },
   mounted() {
-    if (
-      store.state.authenticated.userId.length &&
-      store.state.authenticated.auth
-    ) {
+    if (this.$auth.$storage.getLocalStorage("authenticated")) {
       return redirect("/myshop");
     }
   }

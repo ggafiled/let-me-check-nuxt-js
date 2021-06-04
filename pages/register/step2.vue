@@ -57,7 +57,7 @@
 
 <script>
 export default {
-  middleware: ["RedirectToShop"],
+  // middleware: ["RedirectToShop"],
   data() {
     return {
       errorMsg: "",
@@ -143,6 +143,11 @@ export default {
     },
     back() {
       this.$router.push("/register");
+    }
+  },
+  mounted() {
+    if (this.$auth.$storage.getLocalStorage("authenticated")) {
+      return redirect("/myshop");
     }
   }
 };

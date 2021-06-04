@@ -105,7 +105,7 @@
 
 <script>
 export default {
-  middleware: ["IsAuthenticated"],
+  // middleware: ["IsAuthenticated"],
   data() {
     return {
       errorMsg: ""
@@ -119,6 +119,11 @@ export default {
   methods: {
     close() {
       liff.closeWindow();
+    }
+  },
+  mounted() {
+    if (!this.$auth.$storage.getLocalStorage("authenticated")) {
+      return redirect("/register");
     }
   }
 };

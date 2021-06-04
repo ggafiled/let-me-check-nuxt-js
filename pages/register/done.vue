@@ -45,7 +45,7 @@
 
 <script>
 export default {
-  middleware: ["RedirectToShop"],
+  // middleware: ["RedirectToShop"],
   data() {
     return {};
   },
@@ -60,6 +60,11 @@ export default {
     },
     addShop() {
       this.$router.push("/myshop");
+    }
+  },
+  mounted() {
+    if (this.$auth.$storage.getLocalStorage("authenticated")) {
+      return redirect("/myshop");
     }
   }
 };
