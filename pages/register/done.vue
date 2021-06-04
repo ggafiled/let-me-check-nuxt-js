@@ -63,7 +63,7 @@ export default {
     }
   },
   created() {
-    if (this.$auth.$storage.getLocalStorage("authenticated")) {
+    if (this.$auth.$storage.getCookies("authenticated")) {
       this.$router.push("/myshop");
     }
   },

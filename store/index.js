@@ -69,9 +69,9 @@ export const mutations = {
         };
     },
     initialiseStore(state, data) {
-        if (this.$auth.$storage.getLocalStorage("authenticated")) {
+        if (this.$auth.$storage.getCookie("authenticated")) {
             const { userId, auth } = JSON.parse(
-                JSON.stringify(this.$auth.$storage.getLocalStorage("authenticated"))
+                JSON.stringify(this.$auth.$storage.getCookie("authenticated"))
             );
             state.authenticated.userId = userId;
             state.authenticated.auth = Boolean(auth);
@@ -103,12 +103,13 @@ export const actions = {
             if (snapshot.exists()) {
                 commit("SET_REGISTER", snapshot.val());
                 // TO DO
-                this.$auth.$storage.setLocalStorage(
+                this.$auth.$storage.setCookie(
                     "authenticated",
                     JSON.stringify({
                         userID: this.state.profile.userId,
                         auth: true
-                    })
+                    }),
+                    true
                 );
 
                 commit("initialiseStore", {
@@ -117,7 +118,7 @@ export const actions = {
                 });
 
                 console.log(
-                    JSON.stringify(this.$auth.$storage.getLocalStorage("authenticated"))
+                    JSON.stringify(this.$auth.$storage.getCookie("authenticated"))
                 );
             }
         } catch (e) {
