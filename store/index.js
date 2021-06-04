@@ -63,10 +63,7 @@ export const mutations = {
         };
     },
     SET_THAICHANA(state, data) {
-        state.thaichana.myshop = {
-            ...state.thaichana.myshop,
-            ...data
-        };
+        state.thaichana.myshop = [...state.thaichana.myshop, ...data];
     },
     initialiseStore(state, data) {
         if (this.$auth.$storage.getCookie("authenticated")) {
@@ -137,11 +134,21 @@ export const actions = {
         try {
             const snapshot = await thaichanaUserRef.once("value");
             if (snapshot.exists()) {
-                let myShop = [];
+                let myShops = [];
                 snapshot.forEach(childSnapshot => {
-                    myShop.push(childSnapshot.val());
+                    for (var key in childSnapshot.val()) {
+                        myShops.push({
+                            appId: childSnapshot.val()[key].appId,
+                            businessType: childSnapshot.val()[key].businessType,
+                            canCheckin: childSnapshot.val()[key].canCheckin,
+                            shopId: childSnapshot.val()[key].shopId,
+                            status: childSnapshot.val()[key].status,
+                            subcategory: childSnapshot.val()[key].subcategory,
+                            title: childSnapshot.val()[key].title
+                        });
+                    }
                 });
-                commit("SET_THAICHANA", myShop);
+                commit("SET_THAICHANA", myShops);
             }
         } catch (e) {
             commit("SET_DIALOG", {

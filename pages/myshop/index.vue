@@ -14,7 +14,7 @@
     </v-container>
     <v-container
       class="pt-0 pb-0 h-100"
-      :class="!getThaichana.myshop.length ? 'fill-height' : ''"
+      :class="getThaichana.myshop.length <= 0 ? 'fill-height' : ''"
     >
       <v-row v-if="!getThaichana.myshop.length">
         <v-col cols="12">
@@ -43,6 +43,7 @@
           </template>
         </v-list>
       </v-row>
+
       <v-row>
         <v-col cols="12">
           <v-form>
@@ -141,7 +142,7 @@ export default {
               status: status
             });
 
-            vm.$store.dispatch("getThaichana");
+            await vm.$store.dispatch("getThaichana");
 
             vm.$store.dispatch("setDialog", {
               isShow: true,
