@@ -34,13 +34,8 @@
       </v-row>
       <v-row v-else>
         <v-list three-line>
+          <v-subheader v-text="History"></v-subheader>
           <template v-for="(item, index) in getThaichana.myshop">
-            <v-subheader
-              v-if="item.title"
-              :key="index"
-              v-text="item.title"
-            ></v-subheader>
-
             <v-divider :key="index"></v-divider>
 
             <v-list-item :key="item.title">
