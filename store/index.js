@@ -17,13 +17,7 @@ export const state = () => ({
     position: ""
   },
   thaichana: {
-    myshop: [
-      {
-        appId: "0001",
-        title: "กองทหารพลาธิการ กองพลทหารราบที่ 3",
-        shopId: "DSDSDS211DDD4FD4F6F4DS2F1DSFDF323"
-      }
-    ]
+    myshop: []
   },
   profile: {
     userId: "",
@@ -136,9 +130,7 @@ export const actions = {
     }
   },
   async getThaichana({ commit }) {
-    const thaichanaUserRef = this.$fire.database.ref(
-      "/member/thaichana/" + this.state.profile.userId
-    );
+    const thaichanaUserRef = this.$fire.database.ref("/member/thaichana");
     try {
       const snapshot = await thaichanaUserRef.once("value");
       if (snapshot.exists()) {
