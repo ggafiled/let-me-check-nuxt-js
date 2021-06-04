@@ -142,7 +142,7 @@ export default {
               status: status
             });
 
-            await vm.$store.dispatch("getThaichana");
+            vm.$store.dispatch("getThaichana");
 
             vm.$store.dispatch("setDialog", {
               isShow: true,
@@ -150,12 +150,13 @@ export default {
               message: `ระบบได้ทำการบันทึกร้านค้า ${shopName} ให้แล้วค่ะ`
             });
 
-            liff.sendMessages([
+            await liff.sendMessages([
               {
                 type: "text",
                 text: `ระบบได้ทำการบันทึกร้านค้า ${shopName} ให้แล้วค่ะ`
               }
             ]);
+            this.$forceUpdate();
           }
         });
       } catch (e) {
