@@ -98,7 +98,7 @@ export default {
     }
   },
   methods: {
-    async extractUriParams(uri) {
+    extractUriParams(uri) {
       let params = (
         url.search.match(new RegExp("([^?=&]+)(=([^&]*))?", "g")) || []
       ).reduce(function(result, each, n, every) {
@@ -124,8 +124,8 @@ export default {
           console.log("error", err);
         });
       try {
-        await liff.scanCode().then(result => {
-          const { appId, shopId } = await this.extractUriParams(result);
+        liff.scanCode().then(result => {
+          const { appId, shopId } = this.extractUriParams(result);
           if (!appId.length || !shopId.length) {
             this.$store.dispatch("setDialog", {
               isShow: true,
