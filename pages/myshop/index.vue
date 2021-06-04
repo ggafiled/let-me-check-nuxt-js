@@ -121,9 +121,9 @@ export default {
       liff.closeWindow();
     }
   },
-  mounted() {
+  created() {
     if (!this.$auth.$storage.getLocalStorage("authenticated")) {
-      return redirect("/register");
+      this.$router.push("/register");
     }
   }
 };

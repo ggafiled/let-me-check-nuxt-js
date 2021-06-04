@@ -201,9 +201,9 @@ export default {
       return this.$store.getters.getRegister;
     }
   },
-  mounted() {
+  created() {
     if (this.$auth.$storage.getLocalStorage("authenticated")) {
-      return redirect("/myshop");
+      this.$router.push("/myshop");
     }
   }
 };
