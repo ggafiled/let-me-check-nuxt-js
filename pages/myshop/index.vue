@@ -109,20 +109,6 @@ export default {
       return params;
     },
     async scanToAddShop() {
-      liff
-        .sendMessages([
-          {
-            type: "text",
-            text:
-              "ระบบได้ทำการบันทึกร้านค้า The Mall Korat (เดอะมอล์ โครราช) ให้แล้วค่ะ"
-          }
-        ])
-        .then(() => {
-          console.log("message sent");
-        })
-        .catch(err => {
-          console.log("error", err);
-        });
       try {
         var vm = this;
         liff.scanCode().then(result => {
@@ -134,16 +120,33 @@ export default {
               message: "Incorrect shop format on thaichana platform."
             });
           } else {
+            const {
+              shopName,
+              subcategory,
+              businessType,
+              canCheckin,
+              status
+            } = await vm.$store.dispatch("getThaichanaShopNameByToken", {
+              appId: appId,
+              shopId: shopId
+            });
+
             vm.$store.dispatch("setThaichanaShop", {
               appId: appId,
               shopId: shopId,
-              title: "The Mall Korat (เดอะมอล์ โครราช)"
+              title: shopName,
+              subcategory:subcategory,
+              businessType:businessType,
+              canCheckin:canCheckin,
+              status:status
             });
+
+            vm.$store.dispatch("getThaichana");
 
             vm.$store.dispatch("setDialog", {
               isShow: true,
               title: "Success",
-              message: `ระบบได้ทำการบันทึกร้านค้า ${appId} The Mall Korat (เดอะมอล์ โครราช) ให้แล้วค่ะ`
+              message: `ระบบได้ทำการบันทึกร้านค้า ${shopName} ให้แล้วค่ะ`
             });
           }
         });
@@ -163,6 +166,9 @@ export default {
     if (!this.$auth.$storage.getLocalStorage("authenticated")) {
       this.$router.push("/register");
     }
+  },
+  mounted() {
+    this.$store.dispatch("getThaichana");
   },
   head() {
     return {

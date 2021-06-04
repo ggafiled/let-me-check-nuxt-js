@@ -153,13 +153,12 @@ export const actions = {
       return;
     }
   },
-  async setThaichanaShop({ commit, dispatch }, data) {
+  async setThaichanaShop({ commit }, data) {
     const thaichanaUserRef = this.$fire.database.ref(
       "/member/thaichana/" + this.state.profile.userId
     );
     try {
       thaichanaUserRef.set(data);
-      dispatch("getThaichana");
     } catch (e) {
       commit("SET_DIALOG", {
         isShow: true,
@@ -168,5 +167,11 @@ export const actions = {
       });
       return;
     }
+  },
+  async getThaichanaShopNameByToken({ commit }, data) {
+    const response = await this.$axios.$get(
+      `https://api-customer.thaichana.com/shop/${data.appId}/${data.shopId}/qr`
+    );
+    return response;
   }
 };
