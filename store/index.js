@@ -156,9 +156,7 @@ export const actions = {
     }
   },
   async setThaichanaShop({ commit }, data) {
-    const thaichanaUserRef = this.$fire.database.ref(
-      "/member/thaichana/" + this.state.profile.userId
-    );
+    const thaichanaUserRef = this.$fire.database.ref("/member/thaichana");
     try {
       thaichanaUserRef.set(data);
     } catch (e) {
