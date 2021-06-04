@@ -126,31 +126,26 @@ export default {
       try {
         var vm = this;
         liff.scanCode().then(result => {
-          // var { appId, shopId } = vm.extractUriParams(result);
-          // if (appId.trim() == "" || shopId.trim() == "") {
-          //   vm.$store.dispatch("setDialog", {
-          //     isShow: true,
-          //     title: "Form error",
-          //     message: "Incorrect shop format on thaichana platform."
-          //   });
-          // } else {
-          //   vm.$store.dispatch("setThaichanaShop", {
-          //     appId: appId,
-          //     shopId: shopId,
-          //     title: "The Mall Korat (เดอะมอล์ โครราช)"
-          //   });
+          var { appId, shopId } = vm.extractUriParams(result.value);
+          if (appId.trim() == "" || shopId.trim() == "") {
+            vm.$store.dispatch("setDialog", {
+              isShow: true,
+              title: "Form error",
+              message: "Incorrect shop format on thaichana platform."
+            });
+          } else {
+            vm.$store.dispatch("setThaichanaShop", {
+              appId: appId,
+              shopId: shopId,
+              title: "The Mall Korat (เดอะมอล์ โครราช)"
+            });
 
-          //   vm.$store.dispatch("setDialog", {
-          //     isShow: true,
-          //     title: "Success",
-          //     message: `ระบบได้ทำการบันทึกร้านค้า ${appId} The Mall Korat (เดอะมอล์ โครราช) ให้แล้วค่ะ`
-          //   });
-          // }
-          vm.$store.dispatch("setDialog", {
-            isShow: true,
-            title: "Success",
-            message: `${JSON.stringify(result)}`
-          });
+            vm.$store.dispatch("setDialog", {
+              isShow: true,
+              title: "Success",
+              message: `ระบบได้ทำการบันทึกร้านค้า ${appId} The Mall Korat (เดอะมอล์ โครราช) ให้แล้วค่ะ`
+            });
+          }
         });
       } catch (e) {
         this.$store.dispatch("setDialog", {
