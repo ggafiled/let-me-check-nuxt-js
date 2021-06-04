@@ -109,15 +109,23 @@ export default {
       return params;
     },
     scanToAddShop() {
-      if (liff.scanCode) {
+      try {
         liff.scanCode().then(result => {
           const { appId, shopId } = this.extractUriParams(result);
           if (!appId.length || !shopId.length) {
-            // TO DO ACTIONS IF INCORRECT FORMAT
+            this.$store.dispatch("setDialog", {
+              isShow: true,
+              title: "Form error",
+              message: "Incorrect shop format on thaichana platform."
+            });
           } else {
+            this.$store.dispatch("setThaichanaShop", {
+              appId: appId,
+              shopId: shopId
+            });
           }
         });
-      } else {
+      } catch (e) {
         this.$store.dispatch("setDialog", {
           isShow: true,
           title: "Liff module error",
