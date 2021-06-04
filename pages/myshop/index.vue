@@ -121,8 +121,23 @@ export default {
           } else {
             this.$store.dispatch("setThaichanaShop", {
               appId: appId,
-              shopId: shopId
+              shopId: shopId,
+              title: "The Mall Korat (เดอะมอล์ โครราช)"
             });
+            liff
+              .sendMessages([
+                {
+                  type: "text",
+                  text:
+                    "ระบบได้ทำการบันทึกร้านค้า The Mall Korat (เดอะมอล์ โครราช) ให้แล้วค่ะ"
+                }
+              ])
+              .then(() => {
+                console.log("message sent");
+              })
+              .catch(err => {
+                console.log("error", err);
+              });
           }
         });
       } catch (e) {
