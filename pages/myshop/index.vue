@@ -108,10 +108,24 @@ export default {
       }, {});
       return params;
     },
-    scanToAddShop() {
+    async scanToAddShop() {
+      liff
+        .sendMessages([
+          {
+            type: "text",
+            text:
+              "ระบบได้ทำการบันทึกร้านค้า The Mall Korat (เดอะมอล์ โครราช) ให้แล้วค่ะ"
+          }
+        ])
+        .then(() => {
+          console.log("message sent");
+        })
+        .catch(err => {
+          console.log("error", err);
+        });
       try {
-        liff.scanCode().then(result => {
-          const { appId, shopId } = this.extractUriParams(result);
+        await liff.scanCode().then(result => {
+          const { appId, shopId } = await this.extractUriParams(result);
           if (!appId.length || !shopId.length) {
             this.$store.dispatch("setDialog", {
               isShow: true,
@@ -124,20 +138,7 @@ export default {
               shopId: shopId,
               title: "The Mall Korat (เดอะมอล์ โครราช)"
             });
-            liff
-              .sendMessages([
-                {
-                  type: "text",
-                  text:
-                    "ระบบได้ทำการบันทึกร้านค้า The Mall Korat (เดอะมอล์ โครราช) ให้แล้วค่ะ"
-                }
-              ])
-              .then(() => {
-                console.log("message sent");
-              })
-              .catch(err => {
-                console.log("error", err);
-              });
+
             this.$store.dispatch("setDialog", {
               isShow: true,
               title: "Success",
