@@ -26,7 +26,6 @@ export default {
     }
   },
   mounted() {
-    this.$auth.$storage.removeLocalStorage("authenticated");
     liff.init(
       { liffId: "1656052121-D102plpE" },
       () => {

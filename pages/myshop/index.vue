@@ -157,7 +157,7 @@ export default {
               status: status
             });
 
-            this.liffSendMessage(
+            vm.liffSendMessage(
               `ระบบได้ทำการเพิ่ม ${shopName} ประเภทธุรกิจ ${businessType} ให้แล้วค่ะ`
             );
 
@@ -169,13 +169,7 @@ export default {
               message: `ระบบได้ทำการบันทึกร้านค้า ${shopName} ให้แล้วค่ะ`
             });
 
-            await liff.sendMessages([
-              {
-                type: "text",
-                text: `ระบบได้ทำการบันทึกร้านค้า ${shopName} ให้แล้วค่ะ`
-              }
-            ]);
-            this.$forceUpdate();
+            vm.$forceUpdate();
           }
         });
       } catch (e) {
