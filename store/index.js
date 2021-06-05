@@ -65,19 +65,11 @@ export const mutations = {
     SET_THAICHANA(state, data) {
         state.thaichana.myshop = [...state.thaichana.myshop, ...data];
     },
-    initialiseStore(state, data) {
-        if (this.$auth.$storage.getCookie("authenticated")) {
-            const { userId, auth } = JSON.parse(
-                JSON.stringify(this.$auth.$storage.getCookie("authenticated"))
-            );
-            state.authenticated.userId = userId;
-            state.authenticated.auth = Boolean(auth);
-            console.log({
-                origin: "initialiseStore",
-                userId: state.authenticated.userId,
-                auth: state.authenticated.auth
-            });
-        }
+    SET_INIT_STORE(state, data) {
+        state.authenticated = {
+            ...state.authenticated,
+            ...data
+        };
     }
 };
 
@@ -95,28 +87,24 @@ export const actions = {
         const profileRef = this.$fire.database.ref(
             "/member/profile/" + this.state.profile.userId
         );
+
         try {
             const snapshot = await profileRef.once("value");
             if (snapshot.exists()) {
                 commit("SET_REGISTER", snapshot.val());
                 // TO DO
-                this.$auth.$storage.setCookie(
+                this.$auth.$storage.setLocalStorage(
                     "authenticated",
                     JSON.stringify({
-                        userID: this.state.profile.userId,
+                        userId: this.state.profile.userId,
                         auth: true
-                    }),
-                    true
+                    })
                 );
 
-                commit("initialiseStore", {
-                    userID: this.state.profile.userId,
-                    auth: true
+                commit("SET_INIT_STORE", {
+                    userId: this.state.profile.userId,
+                    auth: Boolean(true)
                 });
-
-                console.log(
-                    JSON.stringify(this.$auth.$storage.getCookie("authenticated"))
-                );
             }
         } catch (e) {
             commit("SET_DIALOG", {
@@ -128,26 +116,32 @@ export const actions = {
         }
     },
     async getThaichana({ commit }) {
-        const thaichanaUserRef = this.$fire.database.ref(
-            `/member/thaichana/${this.state.profile.userId}`
+        const { userID, auth } = await this.$auth.$storage.getLocalStorage(
+            "authenticated"
         );
+
+        console.log(userID);
+
+        const thaichanaUserRef = this.$fire.database.ref(
+            `/member/thaichana/${userID}/`
+        );
+
         try {
             const snapshot = await thaichanaUserRef.once("value");
             if (snapshot.exists()) {
                 let myShops = [];
                 snapshot.forEach(childSnapshot => {
-                    for (var key in childSnapshot.val()) {
-                        myShops.push({
-                            appId: childSnapshot.val()[key].appId,
-                            businessType: childSnapshot.val()[key].businessType,
-                            canCheckin: childSnapshot.val()[key].canCheckin,
-                            shopId: childSnapshot.val()[key].shopId,
-                            status: childSnapshot.val()[key].status,
-                            subcategory: childSnapshot.val()[key].subcategory,
-                            title: childSnapshot.val()[key].title
-                        });
-                    }
+                    myShops.push({
+                        appId: childSnapshot.val().appId,
+                        businessType: childSnapshot.val().businessType,
+                        canCheckin: childSnapshot.val().canCheckin,
+                        shopId: childSnapshot.val().shopId,
+                        status: childSnapshot.val().status,
+                        subcategory: childSnapshot.val().subcategory,
+                        title: childSnapshot.val().title
+                    });
                 });
+                console.log(myShops);
                 commit("SET_THAICHANA", myShops);
             }
         } catch (e) {
@@ -179,5 +173,16 @@ export const actions = {
             `https://api-customer.thaichana.com/shop/${data.appId}/${data.shopId}/qr`
         );
         return response;
+    },
+    initialiseStore({ commit }) {
+        if (this.$auth.$storage.getLocalStorage("authenticated")) {
+            const { userId, auth } = JSON.parse(
+                JSON.stringify(this.$auth.$storage.getLocalStorage("authenticated"))
+            );
+            commit("SET_INIT_STORE", {
+                userId: userId,
+                auth: Boolean(auth)
+            });
+        }
     }
 };

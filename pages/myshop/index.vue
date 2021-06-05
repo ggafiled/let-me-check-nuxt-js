@@ -109,6 +109,21 @@ export default {
       }, {});
       return params;
     },
+    async liffSendMessage(text) {
+      await liff
+        .sendMessages([
+          {
+            type: "text",
+            text: text
+          }
+        ])
+        .then(() => {
+          console.log("message sent");
+        })
+        .catch(err => {
+          console.log("error", err);
+        });
+    },
     scanToAddShop() {
       try {
         var vm = this;
@@ -141,6 +156,10 @@ export default {
               canCheckin: canCheckin,
               status: status
             });
+
+            this.liffSendMessage(
+              `ระบบได้ทำการเพิ่ม ${shopName} ประเภทธุรกิจ ${businessType} ให้แล้วค่ะ`
+            );
 
             vm.$store.dispatch("getThaichana");
 

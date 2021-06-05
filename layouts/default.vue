@@ -20,11 +20,13 @@ export default {
           console.log(profile);
           this.$store.dispatch("setLineProfile", profile);
           this.$store.dispatch("checkIsRegisted");
+          this.$store.dispatch("initialiseStore");
         })
         .catch(err => console.error(err));
     }
   },
   mounted() {
+    this.$auth.$storage.removeLocalStorage("authenticated");
     liff.init(
       { liffId: "1656052121-D102plpE" },
       () => {
