@@ -119,14 +119,14 @@ export const actions = {
         }
     },
     async getThaichana({ commit }) {
-        const { userID, auth } = await this.$auth.$storage.getLocalStorage(
+        const { userId, auth } = await this.$auth.$storage.getLocalStorage(
             "authenticated"
         );
 
-        console.log(userID);
+        console.log(userId);
 
         const thaichanaUserRef = this.$fire.database.ref(
-            `/member/thaichana/${userID}/`
+            `/member/thaichana/${userId}/`
         );
 
         try {
