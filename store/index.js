@@ -40,6 +40,9 @@ export const getters = {
     },
     getThaichana(state) {
         return state.thaichana;
+    },
+    getAuthenticated(state) {
+        return state.authenticated;
     }
 };
 

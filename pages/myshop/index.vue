@@ -185,7 +185,10 @@ export default {
     }
   },
   created() {
-    if (!this.$auth.$storage.getCookies("authenticated")) {
+    if (
+      !this.$store.getters.getAuthenticated.userId &&
+      !this.$store.getters.getAuthenticated.auth
+    ) {
       this.$router.push("/register");
     }
   },
