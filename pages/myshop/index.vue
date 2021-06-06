@@ -185,7 +185,7 @@ export default {
     }
   },
   created() {
-    if (!this.$auth.$storage.getCookies("authenticated")) { {
+    if (!this.$auth.$storage.getCookies("authenticated")) {
       this.$router.push("/register");
     }
   },
