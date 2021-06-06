@@ -63,10 +63,7 @@ export default {
     }
   },
   created() {
-    if (
-      this.$store.getters.getAuthenticated.userId &&
-      this.$store.getters.getAuthenticated.auth
-    ) {
+    if (this.$auth.$storage.getCookies("authenticated")) {
       this.$router.push("/myshop");
     }
   },
