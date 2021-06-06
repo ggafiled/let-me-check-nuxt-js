@@ -66,7 +66,7 @@ export const mutations = {
         };
     },
     SET_THAICHANA(state, data) {
-        state.thaichana.myshop = [...state.thaichana.myshop, ...data];
+        state.thaichana.myshop = [...data];
     },
     SET_INIT_STORE(state, data) {
         state.authenticated = {
