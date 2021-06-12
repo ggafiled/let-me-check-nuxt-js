@@ -97,11 +97,9 @@ export const actions = {
                 return;
             }
 
-            commit("SET_REGISTER", snapshot.data());
-
-            console.log("TEST FIRESTORE");
             snapshot.forEach(doc => {
-                console.log(doc.id, "=>", doc.data());
+                // console.log(doc.id, "=>", doc.data());
+                commit("SET_REGISTER", doc.data());
             });
             this.$auth.$storage.setLocalStorage(
                 "authenticated",
@@ -125,14 +123,10 @@ export const actions = {
         }
     },
     async getThaichana({ commit }) {
+        const thaichanaUserRef = this.$fire.firestore.collection("thaichana");
         const { userId, auth } = await this.$auth.$storage.getLocalStorage(
             "authenticated"
         );
-
-        console.log("*getThaichana");
-        console.log(userId);
-
-        const thaichanaUserRef = this.$fire.firestore.collection("thaichana");
 
         try {
             const snapshot = await thaichanaUserRef
@@ -189,9 +183,7 @@ export const actions = {
                 .where("userId", "==", userId)
                 .get();
 
-            snapshotIsOverLimit.forEach(doc => {
-                snapshotCount = doc.size;
-            });
+            snapshotCount = await snapshotIsOverLimit.size;
 
             if (snapshotCount > 3) {
                 commit("SET_DIALOG", {

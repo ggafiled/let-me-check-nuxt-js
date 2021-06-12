@@ -167,8 +167,8 @@ export default {
       try {
         var vm = this;
         liff.scanCode().then(async result => {
-          var { appId, shopId } = vm.extractUriParams(result.value);
-          if (appId.trim() == "" || shopId.trim() == "") {
+          var { appId, shopId } = await vm.extractUriParams(result.value);
+          if (!appId.length || !shopId.length) {
             vm.$store.dispatch("setDialog", {
               isShow: true,
               title: "Form error",
