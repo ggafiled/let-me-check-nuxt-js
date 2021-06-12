@@ -172,8 +172,8 @@ export const actions = {
             if (!snapshotIsExists.empty) {
                 commit("SET_DIALOG", {
                     isShow: true,
-                    title: "Info",
-                    message: "Sory this shop has exists in system already."
+                    title: "ขออภัย",
+                    message: "ขออภัยค่ะ คุณเพิ่มร้านค้านี้ไปแล้ว."
                 });
                 return;
             }
@@ -188,8 +188,8 @@ export const actions = {
             if (snapshotCount > 3) {
                 commit("SET_DIALOG", {
                     isShow: true,
-                    title: "Info",
-                    message: "Sorry your shop is over limit."
+                    title: "ขออภัย",
+                    message: "ขออภัยค่ะ ตอนนี้คุณมีร้านค้าครบขีดจำกัดแล้ว."
                 });
                 return;
             }
@@ -198,7 +198,7 @@ export const actions = {
             commit("SET_DIALOG", {
                 isShow: true,
                 title: "Success",
-                message: `ระบบได้ทำการบันทึกร้านค้า ${shopName} ให้แล้วค่ะ`
+                message: `ระบบได้ทำการบันทึกร้านค้า ${data.title} ให้แล้วค่ะ`
             });
         } catch (e) {
             commit("SET_DIALOG", {
