@@ -199,10 +199,19 @@ export const actions = {
                     title: "Success",
                     message: `ระบบได้ทำการบันทึกร้านค้า ${data.title} ให้แล้วค่ะ`
                 });
-                await this.$line.pushMessage(
-                    data.userId,
-                    `ระบบได้ทำการบันทึกร้านค้า ${data.title} ให้แล้วค่ะ`
-                );
+                try {
+                    await this.line.pushMessage(
+                        data.userId,
+                        `ระบบได้ทำการบันทึกร้านค้า ${data.title} ให้แล้วค่ะ`
+                    );
+                } catch (e) {
+                    commit("SET_DIALOG", {
+                        isShow: true,
+                        title: "เกิดข้อผิดพลาด",
+                        message: "ไม่สามารถส่งข้อความแจ้งเตือนได้ เนื่องจากพบปัญหาบางอย่าง"
+                    });
+                    return;
+                }
             }
         } catch (e) {
             commit("SET_DIALOG", {

@@ -148,21 +148,6 @@ export default {
         });
       }
     },
-    async liffSendMessage(text) {
-      await liff
-        .sendMessages([
-          {
-            type: "text",
-            text: text
-          }
-        ])
-        .then(() => {
-          console.log("message sent");
-        })
-        .catch(err => {
-          console.log("error", err);
-        });
-    },
     scanToAddShop() {
       try {
         var vm = this;

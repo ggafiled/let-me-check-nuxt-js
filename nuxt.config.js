@@ -35,7 +35,7 @@ export default {
         },
         {
             src: "~/plugins/line.js",
-            mode: "server"
+            mode: "client"
         }
     ],
 
@@ -99,7 +99,12 @@ export default {
 
     // Build Configuration: https://go.nuxtjs.dev/config-build
     build: {
-        transpile: ["vue-confirm-dialog", "line"]
+        transpile: ["vue-confirm-dialog", "line"],
+        extend(config, {}) {
+            config.node = {
+                fs: "empty"
+            };
+        }
     }
     // serverMiddleware: [{
     //     path: "/cronjob-thaichana",
