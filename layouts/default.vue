@@ -2,6 +2,7 @@
   <v-app>
     <nuxt />
     <Dialog />
+    <vue-confirm-dialog></vue-confirm-dialog>
   </v-app>
 </template>
 
@@ -32,7 +33,7 @@ export default {
         if (liff.isLoggedIn()) {
           this.runApp();
         } else {
-          liff.login();
+          // liff.login();
         }
       },
       err => console.error(err.code, error.message)

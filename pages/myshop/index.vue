@@ -122,8 +122,24 @@ export default {
     },
     async removeShop(item) {
       try {
-        await this.$store.dispatch("removeShop", item);
-        this.$store.dispatch("getThaichana");
+        this.$confirm({
+          title: "ลบข้อมูล",
+          message: `คุณต้องการลบ ${item.title} หรือไม่`,
+          button: {
+            yes: "ลบ",
+            no: "ยกเลิก"
+          },
+          /**
+           * Callback Function
+           * @param {Boolean} confirm
+           */
+          callback: async confirm => {
+            if (confirm) {
+              // await this.$store.dispatch("removeShop", item);
+              this.$store.dispatch("getThaichana");
+            }
+          }
+        });
       } catch (e) {
         this.$store.dispatch("setDialog", {
           isShow: true,
@@ -171,6 +187,7 @@ export default {
             });
 
             await vm.$store.dispatch("setThaichanaShop", {
+              userId: this.$store.getters.getProfile.userId,
               appId: appId,
               shopId: shopId,
               title: shopName,
