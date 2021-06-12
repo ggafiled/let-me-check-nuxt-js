@@ -195,6 +195,11 @@ export const actions = {
             }
 
             thaichanaUserRef.doc().set(data);
+            commit("SET_DIALOG", {
+                isShow: true,
+                title: "Success",
+                message: `ระบบได้ทำการบันทึกร้านค้า ${shopName} ให้แล้วค่ะ`
+            });
         } catch (e) {
             commit("SET_DIALOG", {
                 isShow: true,

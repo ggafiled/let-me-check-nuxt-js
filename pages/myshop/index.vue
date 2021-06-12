@@ -171,8 +171,8 @@ export default {
           if (!appId.length || !shopId.length) {
             vm.$store.dispatch("setDialog", {
               isShow: true,
-              title: "Form error",
-              message: "Incorrect shop format on thaichana platform."
+              title: "ข้อมูลร้านค้าผิดพลาด",
+              message: "ดูเหมือนว่าข้อมูลที่ระบบอ่านได้ไม่ถูกต้องตามรูปแบบ."
             });
           } else {
             const {
@@ -197,17 +197,7 @@ export default {
               status: status
             });
 
-            vm.liffSendMessage(
-              `ระบบได้ทำการเพิ่ม ${shopName} ประเภทธุรกิจ ${businessType} ให้แล้วค่ะ`
-            );
-
             vm.$store.dispatch("getThaichana");
-
-            vm.$store.dispatch("setDialog", {
-              isShow: true,
-              title: "Success",
-              message: `ระบบได้ทำการบันทึกร้านค้า ${shopName} ให้แล้วค่ะ`
-            });
 
             vm.$forceUpdate();
           }
