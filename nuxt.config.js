@@ -96,4 +96,8 @@ export default {
     build: {
         transpile: ["vue-confirm-dialog"]
     }
+    // serverMiddleware: [{
+    //     path: "/cronjob-thaichana",
+    //     handler: "~/server-middleware/cronjob-thaichana.js"
+    // }]
 };
