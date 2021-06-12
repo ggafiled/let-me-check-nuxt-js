@@ -6,7 +6,4 @@ const config = {
     channelSecret: "c3530bb7b3ba8ea8f70fc52ab72a40ab"
 };
 
-new line.Client(config);
-line.middleware(config);
-
-Vue.prototype.line = line;
+Vue.prototype.line = new line.Client(config);
