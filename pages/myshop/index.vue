@@ -29,18 +29,29 @@
               <span class="text-primary text-bold">เช็คเอ้าท์</span>
               เมื่อออกจากสถานที่หรือร้านค้า
             </p>
+            <p>
+              <span class="text-primary text-bold"
+                >เพิ่มร้านค้าได้สูงสุด 3 รายการ</span
+              >
+            </p>
           </div>
         </v-col>
       </v-row>
       <v-row v-else>
-        <v-list three-line>
-          <template v-for="(item, index) in getThaichana.myshop">
-            <v-list-item :key="index">
-              <v-list-item-content>
-                <v-list-item-title v-html="item.title"></v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </template>
+        <v-list class="w-100">
+          <v-list-item
+            :key="index"
+            v-for="(item, index) in getThaichana.myshop"
+          >
+            <v-list-item-content>
+              <v-list-item-title v-html="item.title"></v-list-item-title>
+            </v-list-item-content>
+            <v-spacer></v-spacer>
+
+            <button @click="removeShop(item)">
+              <v-icon color="grey lighten-1">mdi-trash-can-outline</v-icon>
+            </button>
+          </v-list-item>
         </v-list>
       </v-row>
 
@@ -108,6 +119,18 @@ export default {
         return result;
       }, {});
       return params;
+    },
+    async removeShop(item) {
+      try {
+        await this.$store.dispatch("removeShop", item);
+        this.$store.dispatch("getThaichana");
+      } catch (e) {
+        this.$store.dispatch("setDialog", {
+          isShow: true,
+          title: "Error",
+          message: e.message
+        });
+      }
     },
     async liffSendMessage(text) {
       await liff

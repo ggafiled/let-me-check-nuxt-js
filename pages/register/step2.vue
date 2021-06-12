@@ -134,23 +134,7 @@ export default {
     async next() {
       if (this.validate()) {
         this.$store.dispatch("setRegister", this.form);
-        await this.$fire.database
-          .ref("/member/profile/" + this.$store.getters.getProfile.userId)
-          .set(this.$store.getters.getRegister);
-        console.log("Registed");
-        liff
-          .sendMessages([
-            {
-              type: "text",
-              text: "ลงทะเบียนเรียบร้อย ท่านสามารถเพิ่มร้านค้าได้แล้วตอนนี้"
-            }
-          ])
-          .then(() => {
-            console.log("message sent");
-          })
-          .catch(err => {
-            console.log("error", err);
-          });
+        this.$store.dispatch("saveRegister", this.$store.getters.getRegister);
         this.$router.push("/register/done");
       }
     },

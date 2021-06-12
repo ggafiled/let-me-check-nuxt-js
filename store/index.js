@@ -87,28 +87,34 @@ export const actions = {
         commit("SET_LINE_PROFILE", data);
     },
     async checkIsRegisted({ commit }) {
-        const profileRef = this.$fire.database.ref(
-            "/member/profile/" + this.state.profile.userId
-        );
-
         try {
-            const snapshot = await profileRef.once("value");
-            if (snapshot.exists()) {
-                commit("SET_REGISTER", snapshot.val());
-                // TO DO
-                this.$auth.$storage.setLocalStorage(
-                    "authenticated",
-                    JSON.stringify({
-                        userId: this.state.profile.userId,
-                        auth: true
-                    })
-                );
-
-                commit("SET_INIT_STORE", {
-                    userId: this.state.profile.userId,
-                    auth: Boolean(true)
-                });
+            const profileRef = this.$fire.firestore.collection("/users");
+            const snapshot = await profileRef
+                .where("userId", "==", this.state.profile.userId)
+                .get();
+            if (snapshot.empty) {
+                console.log("No matching documents.");
+                return;
             }
+
+            commit("SET_REGISTER", snapshot.data());
+
+            console.log("TEST FIRESTORE");
+            snapshot.forEach(doc => {
+                console.log(doc.id, "=>", doc.data());
+            });
+            this.$auth.$storage.setLocalStorage(
+                "authenticated",
+                JSON.stringify({
+                    userId: this.state.profile.userId,
+                    auth: true
+                })
+            );
+
+            commit("SET_INIT_STORE", {
+                userId: this.state.profile.userId,
+                auth: Boolean(true)
+            });
         } catch (e) {
             commit("SET_DIALOG", {
                 isShow: true,
@@ -123,30 +129,33 @@ export const actions = {
             "authenticated"
         );
 
+        console.log("*getThaichana");
         console.log(userId);
 
-        const thaichanaUserRef = this.$fire.database.ref(
-            `/member/thaichana/${userId}/`
-        );
+        const thaichanaUserRef = this.$fire.firestore.collection("thaichana");
 
         try {
-            const snapshot = await thaichanaUserRef.once("value");
-            if (snapshot.exists()) {
-                let myShops = [];
-                snapshot.forEach(childSnapshot => {
-                    myShops.push({
-                        appId: childSnapshot.val().appId,
-                        businessType: childSnapshot.val().businessType,
-                        canCheckin: childSnapshot.val().canCheckin,
-                        shopId: childSnapshot.val().shopId,
-                        status: childSnapshot.val().status,
-                        subcategory: childSnapshot.val().subcategory,
-                        title: childSnapshot.val().title
-                    });
-                });
-                console.log(myShops);
-                commit("SET_THAICHANA", myShops);
+            const snapshot = await thaichanaUserRef
+                .where("userId", "==", userId)
+                .get();
+            if (snapshot.empty) {
+                console.log("No matching documents.");
+                return [];
             }
+
+            let myShops = [];
+            snapshot.forEach(childSnapshot => {
+                myShops.push({
+                    appId: childSnapshot.data().appId,
+                    businessType: childSnapshot.data().businessType,
+                    canCheckin: childSnapshot.data().canCheckin,
+                    shopId: childSnapshot.data().shopId,
+                    status: childSnapshot.data().status,
+                    subcategory: childSnapshot.data().subcategory,
+                    title: childSnapshot.data().title
+                });
+            });
+            commit("SET_THAICHANA", myShops);
         } catch (e) {
             commit("SET_DIALOG", {
                 isShow: true,
@@ -157,11 +166,43 @@ export const actions = {
         }
     },
     async setThaichanaShop({ commit }, data) {
-        const thaichanaUserRef = this.$fire.database.ref(
-            `/member/thaichana/${this.state.profile.userId}`
+        const { userId, auth } = await this.$auth.$storage.getLocalStorage(
+            "authenticated"
         );
+        const thaichanaUserRef = this.$fire.firestore.collection("thaichana");
         try {
-            thaichanaUserRef.push().set(data);
+            const snapshotIsExists = await thaichanaUserRef
+                .where("userId", "==", userId)
+                .where("shopId", "==", data.shopId)
+                .get();
+            if (!snapshotIsExists.empty) {
+                commit("SET_DIALOG", {
+                    isShow: true,
+                    title: "Info",
+                    message: "Sory this shop has exists in system already."
+                });
+                return;
+            }
+
+            let snapshotCount;
+            const snapshotIsOverLimit = await thaichanaUserRef
+                .where("userId", "==", userId)
+                .get();
+
+            snapshotIsOverLimit.forEach(doc => {
+                snapshotCount = doc.size;
+            });
+
+            if (snapshotCount > 3) {
+                commit("SET_DIALOG", {
+                    isShow: true,
+                    title: "Info",
+                    message: "Sorry your shop is over limit."
+                });
+                return;
+            }
+
+            thaichanaUserRef.doc().set(data);
         } catch (e) {
             commit("SET_DIALOG", {
                 isShow: true,
@@ -186,6 +227,59 @@ export const actions = {
                 userId: userId,
                 auth: Boolean(auth)
             });
+        }
+    },
+    async saveRegister({ commit }, data) {
+        const profileRef = this.$fire.firestore.collection("/users");
+
+        try {
+            await profileRef.doc().set(data);
+            await liff
+                .sendMessages([{
+                    type: "text",
+                    text: "ลงทะเบียนเรียบร้อย ท่านสามารถเพิ่มร้านค้าได้แล้วตอนนี้"
+                }])
+                .then(() => {
+                    console.log("message sent");
+                })
+                .catch(err => {
+                    console.log("error", err);
+                });
+            console.log("Registed");
+        } catch (e) {
+            commit("SET_DIALOG", {
+                isShow: true,
+                title: "Thaichana history error",
+                message: e.message
+            });
+            return;
+        }
+    },
+    async removeShop({ commit }, data) {
+        const { userId, auth } = await this.$auth.$storage.getLocalStorage(
+            "authenticated"
+        );
+        console.log(`ACTION DELETE ${userId} : ${data.shopId}`);
+        const thaichanaUserRef = this.$fire.firestore.collection("thaichana");
+        try {
+            const snapshotIsExists = await thaichanaUserRef
+                .where("userId", "==", userId)
+                .where("shopId", "==", data.shopId)
+                .get();
+
+            if (!snapshotIsExists.empty) {
+                //TO DO REMOVE
+                snapshotIsExists.forEach(async doc => {
+                    await doc.ref.delete();
+                });
+            }
+        } catch (e) {
+            commit("SET_DIALOG", {
+                isShow: true,
+                title: "Error",
+                message: e.message
+            });
+            return;
         }
     }
 };
