@@ -10,6 +10,7 @@
     "heroku-postbuild": "nuxt build"
   },
   "dependencies": {
+    "@line/bot-sdk": "^7.3.0",
     "@line/liff": "^2.10.0",
     "@nuxtjs/auth-next": "5.0.0-1622718665.cc99959",
     "@nuxtjs/axios": "^5.13.6",

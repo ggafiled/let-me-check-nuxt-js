@@ -192,14 +192,18 @@ export const actions = {
                     message: "ขออภัยค่ะ ตอนนี้คุณมีร้านค้าครบขีดจำกัดแล้ว."
                 });
                 return;
+            } else {
+                await thaichanaUserRef.doc().set(data);
+                commit("SET_DIALOG", {
+                    isShow: true,
+                    title: "Success",
+                    message: `ระบบได้ทำการบันทึกร้านค้า ${data.title} ให้แล้วค่ะ`
+                });
+                await this.$line.pushMessage(
+                    data.userId,
+                    `ระบบได้ทำการบันทึกร้านค้า ${data.title} ให้แล้วค่ะ`
+                );
             }
-
-            thaichanaUserRef.doc().set(data);
-            commit("SET_DIALOG", {
-                isShow: true,
-                title: "Success",
-                message: `ระบบได้ทำการบันทึกร้านค้า ${data.title} ให้แล้วค่ะ`
-            });
         } catch (e) {
             commit("SET_DIALOG", {
                 isShow: true,
@@ -231,17 +235,10 @@ export const actions = {
 
         try {
             await profileRef.doc().set(data);
-            await liff
-                .sendMessages([{
-                    type: "text",
-                    text: "ลงทะเบียนเรียบร้อย ท่านสามารถเพิ่มร้านค้าได้แล้วตอนนี้"
-                }])
-                .then(() => {
-                    console.log("message sent");
-                })
-                .catch(err => {
-                    console.log("error", err);
-                });
+            this.$line.pushMessage(
+                data.userId,
+                `ลงทะเบียนเรียบร้อย ท่านสามารถเพิ่มร้านค้าได้แล้วตอนนี้`
+            );
             console.log("Registed");
         } catch (e) {
             commit("SET_DIALOG", {
