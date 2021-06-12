@@ -135,7 +135,7 @@ export default {
            */
           callback: async confirm => {
             if (confirm) {
-              // await this.$store.dispatch("removeShop", item);
+              await this.$store.dispatch("removeShop", item);
               this.$store.dispatch("getThaichana");
             }
           }
@@ -194,6 +194,7 @@ export default {
               subcategory: subcategory,
               businessType: businessType,
               canCheckin: canCheckin,
+
               status: status
             });
 
