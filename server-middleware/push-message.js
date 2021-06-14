@@ -35,7 +35,7 @@ app.post("/", async(req, res) => {
                                 generateMessageStructure(
                                     req.body.userId,
                                     `${req.body.title} ${
-          isCheckIn ? `ในช่วงเวลา ${moment().format("HH:mm")}` : ""
+          req.body.isCheckIn ? `ในช่วงเวลา ${moment().format("HH:mm")}` : ""
         }`
       )
     )
