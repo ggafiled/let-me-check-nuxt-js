@@ -140,6 +140,7 @@ export const actions = {
       let myShops = [];
       snapshot.forEach(childSnapshot => {
         myShops.push({
+          userId: childSnapshot.data().userId,
           appId: childSnapshot.data().appId,
           businessType: childSnapshot.data().businessType,
           canCheckin: childSnapshot.data().canCheckin,
@@ -200,10 +201,23 @@ export const actions = {
           message: `ระบบได้ทำการบันทึกร้านค้า ${data.title} ให้แล้วค่ะ`
         });
         try {
-          await this.$line.pushMessage(
-            data.userId,
-            `ระบบได้ทำการบันทึกร้านค้า ${data.title} ให้แล้วค่ะ`
-          );
+          var infomation = {
+            appId: data.appId,
+            businessType: data.businessType,
+            canCheckin: data.canCheck,
+            shopId: data.shopId,
+            status: data.status,
+            subcategory: data.subcategory,
+            title: data.title,
+            userId: data.userId,
+            message: `ระบบได้ทำการบันทึกร้านค้า ${data.title} ให้แล้วค่ะ`,
+            isCheckIn: false
+          };
+          const response = this.$axios.$post("/push-message", infomation, {
+            headers: {
+              "Content-Type": "application/json"
+            }
+          });
         } catch (e) {
           commit("SET_DIALOG", {
             isShow: true,
@@ -244,10 +258,24 @@ export const actions = {
 
     try {
       await profileRef.doc().set(data);
-      this.$line.pushMessage(
-        data.userId,
-        `ลงทะเบียนเรียบร้อย ท่านสามารถเพิ่มร้านค้าได้แล้วตอนนี้`
-      );
+      var infomation = {
+        appId: data.appId,
+        businessType: data.businessType,
+        canCheckin: data.canCheck,
+        shopId: data.shopId,
+        status: data.status,
+        subcategory: data.subcategory,
+        title: data.title,
+        userId: data.userId,
+        message: `ลงทะเบียนเรียบร้อย ท่านสามารถเพิ่มร้านค้าได้แล้วตอนนี้`,
+        isCheckIn: false
+      };
+      const response = this.$axios.$post("/push-message", infomation, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+
       console.log("Registed");
     } catch (e) {
       commit("SET_DIALOG", {
@@ -284,5 +312,25 @@ export const actions = {
       });
       return;
     }
+  },
+  pushMessageToLine({ commit }, data) {
+    var infomation = {
+      appId: data.appId,
+      businessType: data.businessType,
+      canCheckin: data.canCheck,
+      shopId: data.shopId,
+      status: data.status,
+      subcategory: data.subcategory,
+      title: data.title,
+      userId: data.userId,
+      message: `ระบบได้ทำการเช็คอินร้านค้า ${data.title} ให้แล้วค่ะ`,
+      isCheckIn: true
+    };
+    const response = this.$axios.$post("/push-message", infomation, {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+    return response;
   }
 };

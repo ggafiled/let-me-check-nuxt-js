@@ -35,10 +35,6 @@ export default {
     {
       src: "~/plugins/vue-confirm-dialog.js",
       mode: "client"
-    },
-    {
-      src: "~/plugins/line.js",
-      mode: "client"
     }
   ],
 
@@ -101,16 +97,16 @@ export default {
     }
   },
   axios: {
-    proxy: true,
-    proxyHeaders: true
+    // proxy: true,
+    // proxyHeaders: true
   },
 
   proxy: {
-    "/api/v1": {
-      target: "https://api.line.me/",
-      pathRewrite: { "^/api/v1": "" },
-      changeOrigin: true
-    }
+    // "/api/v1": {
+    //   target: "https://api.line.me/",
+    //   pathRewrite: { "^/api/v1": "" },
+    //   changeOrigin: true
+    // }
   },
   vue: {
     config: {
@@ -126,9 +122,15 @@ export default {
         fs: "empty"
       };
     }
-  }
-  // serverMiddleware: [{
-  //     path: "/cronjob-thaichana",
-  //     handler: "~/server-middleware/cronjob-thaichana.js"
-  // }]
+  },
+  serverMiddleware: [
+    {
+      path: "/cronjob-thaichana",
+      handler: "~/server-middleware/cronjob-thaichana.js"
+    },
+    {
+      path: "/push-message",
+      handler: "~/server-middleware/push-message.js"
+    }
+  ]
 };

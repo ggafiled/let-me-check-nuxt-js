@@ -1,39 +1,20 @@
-export default async function(req, res, next) {
-    const { userId, auth } = await auth.$storage.getLocalStorage("authenticated");
+const express = require("express");
+const app = express();
+var moment = require("moment");
+const bodyParser = require("body-parser");
+const fetch = require("node-fetch");
+require("dotenv").config();
+moment.locale("th");
 
-    console.log("*getThaichana");
-    console.log(userId);
+app.use(
+  express.urlencoded({
+    extended: false
+  })
+);
+app.use(bodyParser.json());
 
-    const thaichanaUserRef = this.$fire.firestore.collection("thaichana");
+app.post("/", async (req, res) => {
+  return res.json({ status: "ok", req: req.body, response: [] });
+});
 
-    try {
-        const snapshot = await thaichanaUserRef.where("userId", "==", userId).get();
-        if (snapshot.empty) {
-            console.log("No matching documents.");
-            return [];
-        }
-
-        let myShops = [];
-        snapshot.forEach(childSnapshot => {
-            myShops.push({
-                appId: childSnapshot.data().appId,
-                businessType: childSnapshot.data().businessType,
-                canCheckin: childSnapshot.data().canCheckin,
-                shopId: childSnapshot.data().shopId,
-                status: childSnapshot.data().status,
-                subcategory: childSnapshot.data().subcategory,
-                title: childSnapshot.data().title
-            });
-        });
-
-        return res.status(200).json(myShops);
-        next();
-    } catch (e) {
-        commit("SET_DIALOG", {
-            isShow: true,
-            title: "Thaichana history error",
-            message: e.message
-        });
-        return;
-    }
-}
+module.exports = app;

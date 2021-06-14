@@ -48,7 +48,7 @@
             </v-list-item-content>
             <v-spacer></v-spacer>
             <button @click="sendToLine(item)" class="mr-4">
-              <v-icon color="grey lighten-1">mdi-bell-ring</v-icon>
+              <v-icon color="grey lighten-1">mdi-timeline-check-outline</v-icon>
             </button>
             <button @click="removeShop(item)">
               <v-icon color="grey lighten-1">mdi-trash-can-outline</v-icon>
@@ -124,10 +124,14 @@ export default {
     },
     sendToLine(item) {
       try {
-        this.$line.pushMessage(
-          item.userId,
-          `ระบบได้ทำการบันทึกร้านค้า ${item.title} ให้แล้วค่ะ`
-        );
+        this.$store.dispatch("pushMessageToLine", item);
+        this.$confirm({
+          title: "แจ้งเตือน",
+          message: `ระบบได้ทำการเช็คอินร้านค้า ${item.title} ให้คุณแล้วค่ะ`,
+          button: {
+            yes: "รับทราบ"
+          }
+        });
       } catch (e) {
         console.log(e);
       }
