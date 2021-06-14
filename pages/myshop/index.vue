@@ -47,7 +47,9 @@
               <v-list-item-title v-html="item.title"></v-list-item-title>
             </v-list-item-content>
             <v-spacer></v-spacer>
-
+            <button @click="sendToLine(item)" class="mr-4">
+              <v-icon color="grey lighten-1">mdi-bell-ring</v-icon>
+            </button>
             <button @click="removeShop(item)">
               <v-icon color="grey lighten-1">mdi-trash-can-outline</v-icon>
             </button>
@@ -119,6 +121,16 @@ export default {
         return result;
       }, {});
       return params;
+    },
+    sendToLine(item) {
+      try {
+        this.$line.pushMessage(
+          item.userId,
+          `ระบบได้ทำการบันทึกร้านค้า ${item.title} ให้แล้วค่ะ`
+        );
+      } catch (e) {
+        console.log(e);
+      }
     },
     async removeShop(item) {
       try {

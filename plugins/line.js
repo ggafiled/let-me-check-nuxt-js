@@ -1,9 +1,51 @@
 import Vue from "vue";
-import * as line from "@line/bot-sdk";
+// import * as line from "@line/bot-sdk";
+const axios = require("axios");
+require("dotenv").config();
 
 const config = {
-    channelAccessToken: "kS33WAWpGOQmSABYZ6/jGpT8YP4YvEaALbGm3ldNlqdibzji0cR1xCm1hJ1Ofcd8ICy3rvqayw4qNWtsiDHBZYxzWzL35+27G5coSZxOxT8S3ZbyU2vJqnV9jZHNY+//0Z4tluhOfV39LAQ/4oiguQdB04t89/1O/w1cDnyilFU=",
-    channelSecret: "c3530bb7b3ba8ea8f70fc52ab72a40ab"
+  channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
+  channelSecret: process.env.CHANNEL_SECRET
 };
 
-Vue.prototype.line = new line.Client(config);
+class Client {
+  constructor(config) {
+    this.config = config;
+    axios.defaults.headers = {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + config.channelAccessToken
+    };
+  }
+
+  pushMessage(to, message) {
+    console.log(`pushMessage(to=${to}, message=${message})`);
+    return new Promise((resolve, reject) => {
+      axios
+        .post(
+          "https://api.line.me/v2/bot/message/push",
+          this.generateMessageStructure(to, message)
+        )
+        .then(res => {
+          resolve(res);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
+
+  generateMessageStructure(to, message) {
+    let template = {
+      to: to,
+      messages: [
+        {
+          type: "text",
+          text: message
+        }
+      ]
+    };
+    return template;
+  }
+}
+
+Vue.prototype.$line = new Client(config);
