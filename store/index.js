@@ -184,7 +184,7 @@ export const actions = {
                 .where("userId", "==", userId)
                 .get();
 
-            snapshotCount = await snapshotIsOverLimit.size;
+            snapshotCount = (await snapshotIsOverLimit.size) + 1;
 
             if (snapshotCount > 3) {
                 commit("SET_DIALOG", {
