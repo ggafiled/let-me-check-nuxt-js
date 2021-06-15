@@ -134,7 +134,10 @@ export default {
     async next() {
       if (this.validate()) {
         this.$store.dispatch("setRegister", this.form);
-        this.$store.dispatch("saveRegister", this.$store.getters.getRegister);
+        this.$store.dispatch("saveRegister", {
+          ...this.$store.getters.getRegister,
+          ...this.$store.getters.getProfile
+        });
         this.$router.push("/register/done");
       }
     },
