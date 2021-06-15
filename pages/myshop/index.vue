@@ -47,7 +47,7 @@
               <v-list-item-title v-html="item.title"></v-list-item-title>
             </v-list-item-content>
             <v-spacer></v-spacer>
-            <button @click="sendToLine(item)" class="mr-4">
+            <button @click="checkInThaichana(item)" class="mr-4">
               <v-icon color="grey lighten-1">mdi-timeline-check-outline</v-icon>
             </button>
             <button @click="removeShop(item)">
@@ -122,15 +122,20 @@ export default {
       }, {});
       return params;
     },
-    sendToLine(item) {
+    checkInThaichana(item) {
       try {
-        this.$store.dispatch("pushMessageToLine", item);
-        this.$confirm({
-          title: "แจ้งเตือน",
-          message: `ระบบได้ทำการเช็คอินร้านค้า ${item.title} ให้คุณแล้วค่ะ`,
-          button: {
-            yes: "รับทราบ"
-          }
+        this.$store.dispatch("checkInThaichana", item).then(response => {
+          this.$store.dispatch("pushMessageToLine", item).then(data => {
+            if (data.status === 200) {
+              this.$confirm({
+                title: "แจ้งเตือน",
+                message: `ระบบได้ทำการเช็คอินร้านค้า ${item.title} ให้คุณแล้วค่ะ`,
+                button: {
+                  yes: "รับทราบ"
+                }
+              });
+            }
+          });
         });
       } catch (e) {
         console.log(e);

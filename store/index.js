@@ -1,3 +1,5 @@
+var moment = require("moment-timezone");
+
 export const state = () => ({
   dialog: {
     isShow: false,
@@ -360,6 +362,38 @@ export const actions = {
         }
       });
     }
+    return response;
+  },
+  async checkInThaichana({ commit }, data) {
+    var infomationAuth = {
+      mobileNumber: data.mobileNumber
+    };
+
+    const auth_response = await this.$axios
+      .$post(`https://api-scanner.thaichana.com/register`, infomationAuth, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(response => response.json());
+
+    var infomationCheckIn = {
+      appId: data.appId,
+      shopId: data.shopId
+    };
+
+    const response = await this.$axios
+      .$post(
+        `https://api-customer.thaichana.com/checkin?t=${moment().unix()}`,
+        infomationCheckIn,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: auth_response.token
+          }
+        }
+      )
+      .then(response => response.json());
     return response;
   }
 };
