@@ -122,23 +122,26 @@ export default {
       }, {});
       return params;
     },
-    checkInThaichana(item) {
+    async checkInThaichana(item) {
+      item.mobileNumber =
+        this.$store.getters.getRegister.mobileNumber || "0999999999";
       try {
-        this.$store.dispatch("checkInThaichana", item).then(response => {
-          this.$store.dispatch("pushMessageToLine", item).then(data => {
-            if (data.status === 200) {
-              this.$confirm({
-                title: "แจ้งเตือน",
-                message: `ระบบได้ทำการเช็คอินร้านค้า ${item.title} ให้คุณแล้วค่ะ`,
-                button: {
-                  yes: "รับทราบ"
-                }
-              });
-            }
-          });
+        await this.$store.dispatch("checkInThaichana", item);
+      } catch (error) {
+        console.error(error);
+      }
+
+      try {
+        await this.$store.dispatch("pushMessageToLine", item);
+        this.$confirm({
+          title: "แจ้งเตือน",
+          message: `ระบบได้ทำการเช็คอินร้านค้า ${item.title} ให้คุณแล้วค่ะ`,
+          button: {
+            yes: "รับทราบ"
+          }
         });
-      } catch (e) {
-        console.log(e);
+      } catch (error) {
+        console.error(error);
       }
     },
     async removeShop(item) {

@@ -17,11 +17,11 @@ export default {
     runApp() {
       liff
         .getProfile()
-        .then(profile => {
+        .then(async profile => {
           console.log(profile);
-          this.$store.dispatch("setLineProfile", profile);
-          this.$store.dispatch("checkIsRegisted");
-          this.$store.dispatch("initialiseStore");
+          await this.$store.dispatch("setLineProfile", profile);
+          await this.$store.dispatch("checkIsRegisted");
+          await this.$store.dispatch("initialiseStore");
         })
         .catch(err => console.error(err));
     }

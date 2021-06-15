@@ -369,31 +369,47 @@ export const actions = {
       mobileNumber: data.mobileNumber
     };
 
-    const auth_response = await this.$axios
-      .$post(`https://api-scanner.thaichana.com/register`, infomationAuth, {
+    const auth_response = await fetch(
+      "https://api-scanner.thaichana.com/register",
+      {
+        method: "POST",
         headers: {
           "Content-Type": "application/json"
-        }
-      })
-      .then(response => response.json());
+        },
+        body: JSON.stringify(infomationAuth)
+      }
+    )
+      .then(response => response.json())
+      .then(data => {
+        return data;
+      });
+
+    console.log(auth_response);
 
     var infomationCheckIn = {
       appId: data.appId,
       shopId: data.shopId
     };
 
-    const response = await this.$axios
-      .$post(
-        `https://api-customer.thaichana.com/checkin?t=${moment().unix()}`,
-        infomationCheckIn,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: auth_response.token
-          }
-        }
-      )
-      .then(response => response.json());
+    const response = await fetch(
+      `https://api-customer.thaichana.com/checkin?t=${moment()
+        .tz("Asia/Bangkok")
+        .unix()}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + auth_response.token.trim()
+        },
+        body: JSON.stringify(infomationCheckIn)
+      }
+    )
+      .then(response => response.json())
+      .then(data => {
+        return data;
+      });
+    console.log(response);
+
     return response;
   }
 };
