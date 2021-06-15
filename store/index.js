@@ -94,12 +94,9 @@ export const actions = {
   },
   async checkIsRegisted({ commit }) {
     try {
-      const { userId, auth } = await this.$auth.$storage.getLocalStorage(
-        "authenticated"
-      );
       const profileRef = this.$fire.firestore.collection("/users");
       const snapshot = await profileRef
-        .where("userId", "==", this.state.profile.userId || userId)
+        .where("userId", "==", this.state.profile.userId)
         .get();
       if (snapshot.empty) {
         console.log("No matching documents.");
@@ -356,9 +353,8 @@ export const actions = {
 
       this.$axios
         .$post(
-          process.env.NODE_ENV === "production"
-            ? this.$config.BASE_URL
-            : "" + "/push-message",
+          (process.env.NODE_ENV === "production" ? this.$config.BASE_URL : "") +
+            "/push-message",
           infomation,
           {
             headers: {
