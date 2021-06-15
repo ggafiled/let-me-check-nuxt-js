@@ -33,7 +33,7 @@ export default {
         if (liff.isLoggedIn()) {
           this.runApp();
         } else {
-          if (process.env.NODE_ENV === "production") liff.login();
+          liff.login();
         }
       },
       err => console.error(err.code, error.message)
