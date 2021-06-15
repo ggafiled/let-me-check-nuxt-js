@@ -213,11 +213,19 @@ export const actions = {
             message: `ระบบได้ทำการบันทึกร้านค้า ${data.title} ให้แล้วค่ะ`,
             isCheckIn: false
           };
-          const response = this.$axios.$post("/push-message", infomation, {
-            headers: {
-              "Content-Type": "application/json"
-            }
-          });
+
+          let response;
+          if (process.env.NODE_ENV === "production") {
+            response = this.$axios.$post(
+              this.$config.BASE_URL + "/push-message",
+              infomation,
+              {
+                headers: {
+                  "Content-Type": "application/json"
+                }
+              }
+            );
+          }
         } catch (e) {
           commit("SET_DIALOG", {
             isShow: true,
@@ -270,11 +278,18 @@ export const actions = {
         message: `ลงทะเบียนเรียบร้อย ท่านสามารถเพิ่มร้านค้าได้แล้วตอนนี้`,
         isCheckIn: false
       };
-      const response = this.$axios.$post("/push-message", infomation, {
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
+      let response;
+      if (process.env.NODE_ENV === "production") {
+        response = this.$axios.$post(
+          this.$config.BASE_URL + "/push-message",
+          infomation,
+          {
+            headers: {
+              "Content-Type": "application/json"
+            }
+          }
+        );
+      }
 
       console.log("Registed");
     } catch (e) {
