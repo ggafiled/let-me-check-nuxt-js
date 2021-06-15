@@ -128,7 +128,16 @@ export default {
       try {
         await this.$store.dispatch("checkInThaichana", item);
       } catch (error) {
-        console.error(error);
+        console.log(error);
+      } finally {
+        await this.$store.dispatch("pushMessageToLine", item);
+        this.$confirm({
+          title: "แจ้งเตือน",
+          message: `ระบบได้ทำการเช็คอินร้านค้า ${item.title} ให้คุณแล้วค่ะ`,
+          button: {
+            yes: "รับทราบ"
+          }
+        });
       }
 
       try {

@@ -1,4 +1,8 @@
 var moment = require("moment-timezone");
+const https = require("https");
+const httpsAgent = new https.Agent({
+  rejectUnauthorized: false
+});
 
 export const state = () => ({
   dialog: {
@@ -374,7 +378,8 @@ export const actions = {
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "User-Agent": httpsAgent
         },
         body: JSON.stringify(infomationAuth)
       }
@@ -399,7 +404,8 @@ export const actions = {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + auth_response.token.trim()
+          Authorization: "Bearer " + auth_response.token.trim(),
+          "User-Agent": httpsAgent
         },
         body: JSON.stringify(infomationCheckIn)
       }

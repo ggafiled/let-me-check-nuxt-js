@@ -35,6 +35,9 @@ export default {
     {
       src: "~/plugins/vue-confirm-dialog.js",
       mode: "client"
+    },
+    {
+      src: "~/plugins/axios.js"
     }
   ],
 
