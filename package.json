@@ -26,6 +26,7 @@
     "firebase": "^8.6.3",
     "fs": "0.0.1-security",
     "moment": "^2.29.1",
+    "moment-timezone": "^0.5.33",
     "node-fetch": "^2.6.1",
     "nuxt": "^2.15.3",
     "nuxt-material-design-icons": "^1.0.4",
