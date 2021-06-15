@@ -51,7 +51,7 @@ app.post("/", async (req, res) => {
     .then(data => {
       return data;
     });
-  return res.json({ status: "ok", req: req.body, response: response });
+  return res.json({ message: "ok", req: req.body, response: response });
 });
 
 module.exports = app;

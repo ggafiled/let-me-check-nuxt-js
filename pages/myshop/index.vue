@@ -47,6 +47,12 @@
               <v-list-item-title v-html="item.title"></v-list-item-title>
             </v-list-item-content>
             <v-spacer></v-spacer>
+            <v-switch
+              :value="item.canAutoCheckinOut"
+              label="AUTO"
+              color="primary"
+              class="mr-4"
+            ></v-switch>
             <button @click="checkInThaichana(item)" class="mr-4">
               <v-icon color="grey lighten-1">mdi-timeline-check-outline</v-icon>
             </button>
@@ -124,34 +130,35 @@ export default {
     },
     async checkInThaichana(item) {
       item.mobileNumber =
-        this.$store.getters.getRegister.mobileNumber || "0999999999";
-      try {
-        await this.$store.dispatch("checkInThaichana", item);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        await this.$store.dispatch("pushMessageToLine", item);
-        this.$confirm({
-          title: "แจ้งเตือน",
-          message: `ระบบได้ทำการเช็คอินร้านค้า ${item.title} ให้คุณแล้วค่ะ`,
-          button: {
-            yes: "รับทราบ"
+        this.$store.getters.getRegister.mobileNumber ||
+        "0" + Math.floor(Math.random() * 900000000) + 100000000;
+      await this.$store
+        .dispatch("checkInThaichana", item)
+        .then(async response => {
+          console.log(response);
+          if (response.message === "ok") {
+            await this.$store.dispatch("pushMessageToLine", item).then(data => {
+              if (data.message === "ok") {
+                this.$confirm({
+                  title: "แจ้งเตือน",
+                  message: `ระบบได้ทำการเช็คอินร้านค้า ${item.title} ให้คุณแล้วค่ะ`,
+                  button: {
+                    yes: "รับทราบ"
+                  }
+                });
+              } else {
+                this.$confirm({
+                  title: "มีบางอย่างผิดพลาด",
+                  message:
+                    "ขออภัยค่ะ มีบางอย่างผิดพลาดไม่สามารถเช็คอินได้ กรุณาลองใหม่อีกครั้ง",
+                  button: {
+                    yes: "รับทราบ"
+                  }
+                });
+              }
+            });
           }
         });
-      }
-
-      try {
-        await this.$store.dispatch("pushMessageToLine", item);
-        this.$confirm({
-          title: "แจ้งเตือน",
-          message: `ระบบได้ทำการเช็คอินร้านค้า ${item.title} ให้คุณแล้วค่ะ`,
-          button: {
-            yes: "รับทราบ"
-          }
-        });
-      } catch (error) {
-        console.error(error);
-      }
     },
     async removeShop(item) {
       try {

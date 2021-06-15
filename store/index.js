@@ -94,17 +94,20 @@ export const actions = {
   },
   async checkIsRegisted({ commit }) {
     try {
+      const { userId, auth } = await this.$auth.$storage.getLocalStorage(
+        "authenticated"
+      );
       const profileRef = this.$fire.firestore.collection("/users");
       const snapshot = await profileRef
-        .where("userId", "==", this.state.profile.userId)
+        .where("userId", "==", this.state.profile.userId || userId)
         .get();
       if (snapshot.empty) {
         console.log("No matching documents.");
         return;
       }
 
-      snapshot.forEach(doc => {
-        // console.log(doc.id, "=>", doc.data());
+      await snapshot.forEach(doc => {
+        console.log(doc.id, "=>", doc.data());
         commit("SET_REGISTER", doc.data());
       });
       this.$auth.$storage.setLocalStorage(
@@ -153,7 +156,8 @@ export const actions = {
           shopId: childSnapshot.data().shopId,
           status: childSnapshot.data().status,
           subcategory: childSnapshot.data().subcategory,
-          title: childSnapshot.data().title
+          title: childSnapshot.data().title,
+          canAutoCheckinOut: Boolean(childSnapshot.data().canAutoCheckinOut)
         });
       });
       commit("SET_THAICHANA", myShops);
@@ -217,7 +221,8 @@ export const actions = {
             title: data.title,
             userId: data.userId,
             message: `ระบบได้ทำการบันทึกร้านค้า ${data.title} ให้แล้วค่ะ`,
-            isCheckIn: false
+            isCheckIn: false,
+            canAutoCheckinOut: false
           };
 
           let response;
@@ -335,87 +340,98 @@ export const actions = {
     }
   },
   pushMessageToLine({ commit }, data) {
-    var infomation = {
-      appId: data.appId,
-      businessType: data.businessType,
-      canCheckin: data.canCheck,
-      shopId: data.shopId,
-      status: data.status,
-      subcategory: data.subcategory,
-      title: data.title,
-      userId: data.userId,
-      message: `ระบบได้ทำการเช็คอินร้านค้า ${data.title} ให้แล้วค่ะ`,
-      isCheckIn: true
-    };
+    return new Promise((resolve, reject) => {
+      var infomation = {
+        appId: data.appId,
+        businessType: data.businessType,
+        canCheckin: data.canCheck,
+        shopId: data.shopId,
+        status: data.status,
+        subcategory: data.subcategory,
+        title: data.title,
+        userId: data.userId,
+        message: `ระบบได้ทำการเช็คอินร้านค้า ${data.title} ให้แล้วค่ะ`,
+        isCheckIn: true
+      };
 
-    let response;
-    if (process.env.NODE_ENV === "production") {
-      response = this.$axios.$post(
-        this.$config.BASE_URL + "/push-message",
-        infomation,
-        {
-          headers: {
-            "Content-Type": "application/json"
+      this.$axios
+        .$post(
+          process.env.NODE_ENV === "production"
+            ? this.$config.BASE_URL
+            : "" + "/push-message",
+          infomation,
+          {
+            headers: {
+              "Content-Type": "application/json"
+            }
           }
-        }
-      );
-    } else {
-      response = this.$axios.$post("/push-message", infomation, {
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
-    }
-    return response;
+        )
+        .then(data => resolve(data))
+        .catch(error => {
+          reject(error);
+        });
+    });
   },
-  async checkInThaichana({ commit }, data) {
-    var infomationAuth = {
-      mobileNumber: data.mobileNumber
-    };
+  checkInThaichana({ commit }, data) {
+    return new Promise(async (resolve, reject) => {
+      var infomationAuth = {
+        mobileNumber: data.mobileNumber
+      };
 
-    const auth_response = await fetch(
-      "https://api-scanner.thaichana.com/register",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "User-Agent": httpsAgent
-        },
-        body: JSON.stringify(infomationAuth)
-      }
-    )
-      .then(response => response.json())
-      .then(data => {
-        return data;
-      });
+      const auth_response = await fetch(
+        "https://api-scanner.thaichana.com/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "User-Agent": httpsAgent
+          },
+          body: JSON.stringify(infomationAuth)
+        }
+      )
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error("Something went wrong");
+          }
+        })
+        .catch(error => {
+          reject(error);
+        });
 
-    console.log(auth_response);
+      var infomationCheckIn = {
+        appId: data.appId,
+        shopId: data.shopId
+      };
 
-    var infomationCheckIn = {
-      appId: data.appId,
-      shopId: data.shopId
-    };
-
-    const response = await fetch(
-      `https://api-customer.thaichana.com/checkin?t=${moment()
-        .tz("Asia/Bangkok")
-        .unix()}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + auth_response.token.trim(),
-          "User-Agent": httpsAgent
-        },
-        body: JSON.stringify(infomationCheckIn)
-      }
-    )
-      .then(response => response.json())
-      .then(data => {
-        return data;
-      });
-    console.log(response);
-
-    return response;
+      const response = await fetch(
+        `https://api-customer.thaichana.com/checkin?t=${moment()
+          .tz("Asia/Bangkok")
+          .unix()}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + auth_response.token.trim(),
+            "User-Agent": httpsAgent
+          },
+          body: JSON.stringify(infomationCheckIn)
+        }
+      )
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error("Something went wrong");
+          }
+        })
+        .then(responseJson => {
+          resolve(responseJson);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
   }
 };

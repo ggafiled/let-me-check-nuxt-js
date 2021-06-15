@@ -19,9 +19,9 @@ export default {
         .getProfile()
         .then(async profile => {
           console.log(profile);
+          await this.$store.dispatch("initialiseStore");
           await this.$store.dispatch("setLineProfile", profile);
           await this.$store.dispatch("checkIsRegisted");
-          await this.$store.dispatch("initialiseStore");
         })
         .catch(err => console.error(err));
     }
