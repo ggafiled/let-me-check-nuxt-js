@@ -330,7 +330,7 @@ export const actions = {
     let response;
     if (process.env.NODE_ENV === "production") {
       response = this.$axios.$post(
-        process.env.BASE_URL + "/push-message",
+        this.$config.BASE_URL + "/push-message",
         infomation,
         {
           headers: {
