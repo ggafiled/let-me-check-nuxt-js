@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-var moment = require("moment");
+var moment = require("moment-timezone");
 const bodyParser = require("body-parser");
 const fetch = require("node-fetch");
 require("dotenv").config();
