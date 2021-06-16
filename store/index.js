@@ -270,7 +270,7 @@ export const actions = {
       });
     }
   },
-  async saveRegister({ commit }, data) {
+  async saveRegister({ commit, dispatch }, data) {
     const profileRef = this.$fire.firestore.collection("/users");
 
     try {
@@ -299,7 +299,7 @@ export const actions = {
           }
         );
       }
-
+      dispatch("checkIsRegisted");
       console.log("Registed");
     } catch (e) {
       commit("SET_DIALOG", {
