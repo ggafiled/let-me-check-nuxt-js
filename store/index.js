@@ -99,6 +99,7 @@ export const actions = {
         .where("userId", "==", this.state.profile.userId)
         .get();
       if (snapshot.empty) {
+        this.$auth.$storage.removeLocalStorage("authenticated");
         console.log("No matching documents.");
         return;
       }
@@ -107,7 +108,7 @@ export const actions = {
         console.log(doc.id, "=>", doc.data());
         commit("SET_REGISTER", doc.data());
       });
-      this.$auth.$storage.setLocalStorage(
+      await this.$auth.$storage.setLocalStorage(
         "authenticated",
         JSON.stringify({
           userId: this.state.profile.userId,
