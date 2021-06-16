@@ -52,6 +52,7 @@
               label="AUTO"
               color="primary"
               class="mr-4"
+              @change="changeAutoChecInOutState(item)"
             ></v-switch>
             <button @click="checkInThaichana(item)" class="mr-4">
               <v-icon color="grey lighten-1">mdi-timeline-check-outline</v-icon>
@@ -176,7 +177,7 @@ export default {
           callback: async confirm => {
             if (confirm) {
               await this.$store.dispatch("removeShop", item);
-              this.$store.dispatch("getThaichana");
+              await this.$store.dispatch("getThaichana");
             }
           }
         });
@@ -219,8 +220,9 @@ export default {
               subcategory: subcategory,
               businessType: businessType,
               canCheckin: canCheckin,
-
-              status: status
+              status: status,
+              isCheckIn: false,
+              canAutoCheckinOut: false
             });
 
             vm.$store.dispatch("getThaichana");
@@ -238,6 +240,10 @@ export default {
     },
     close() {
       liff.closeWindow();
+    },
+    async changeAutoChecInOutState(item) {
+      await this.$store.dispatch("changeAutoChecInOutState", item);
+      await this.$store.dispatch("getThaichana");
     }
   },
   created() {

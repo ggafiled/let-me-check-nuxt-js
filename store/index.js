@@ -83,16 +83,24 @@ export const mutations = {
 };
 
 export const actions = {
-  setRegister({ commit }, data) {
+  setRegister({
+    commit
+  }, data) {
     commit("SET_REGISTER", data);
   },
-  setDialog({ commit }, data) {
+  setDialog({
+    commit
+  }, data) {
     commit("SET_DIALOG", data);
   },
-  setLineProfile({ commit }, data) {
+  setLineProfile({
+    commit
+  }, data) {
     commit("SET_LINE_PROFILE", data);
   },
-  async checkIsRegisted({ commit }) {
+  async checkIsRegisted({
+    commit
+  }) {
     try {
       const profileRef = this.$fire.firestore.collection("/users");
       const snapshot = await profileRef
@@ -129,9 +137,14 @@ export const actions = {
       return;
     }
   },
-  async getThaichana({ commit }) {
+  async getThaichana({
+    commit
+  }) {
     const thaichanaUserRef = this.$fire.firestore.collection("thaichana");
-    const { userId, auth } = await this.$auth.$storage.getLocalStorage(
+    const {
+      userId,
+      auth
+    } = await this.$auth.$storage.getLocalStorage(
       "authenticated"
     );
 
@@ -168,8 +181,13 @@ export const actions = {
       return;
     }
   },
-  async setThaichanaShop({ commit }, data) {
-    const { userId, auth } = await this.$auth.$storage.getLocalStorage(
+  async setThaichanaShop({
+    commit
+  }, data) {
+    const {
+      userId,
+      auth
+    } = await this.$auth.$storage.getLocalStorage(
       "authenticated"
     );
     const thaichanaUserRef = this.$fire.firestore.collection("thaichana");
@@ -227,8 +245,7 @@ export const actions = {
           if (process.env.NODE_ENV === "production") {
             response = this.$axios.$post(
               this.$config.BASE_URL + "/push-message",
-              infomation,
-              {
+              infomation, {
                 headers: {
                   "Content-Type": "application/json"
                 }
@@ -253,15 +270,22 @@ export const actions = {
       return;
     }
   },
-  async getThaichanaShopNameByToken({ commit }, data) {
+  async getThaichanaShopNameByToken({
+    commit
+  }, data) {
     const response = await this.$axios.$get(
       `https://api-customer.thaichana.com/shop/${data.appId}/${data.shopId}/qr`
     );
     return response;
   },
-  initialiseStore({ commit }) {
+  initialiseStore({
+    commit
+  }) {
     if (this.$auth.$storage.getLocalStorage("authenticated")) {
-      const { userId, auth } = JSON.parse(
+      const {
+        userId,
+        auth
+      } = JSON.parse(
         JSON.stringify(this.$auth.$storage.getLocalStorage("authenticated"))
       );
       commit("SET_INIT_STORE", {
@@ -270,7 +294,10 @@ export const actions = {
       });
     }
   },
-  async saveRegister({ commit, dispatch }, data) {
+  async saveRegister({
+    commit,
+    dispatch
+  }, data) {
     const profileRef = this.$fire.firestore.collection("/users");
 
     try {
@@ -291,8 +318,7 @@ export const actions = {
       if (process.env.NODE_ENV === "production") {
         response = this.$axios.$post(
           this.$config.BASE_URL + "/push-message",
-          infomation,
-          {
+          infomation, {
             headers: {
               "Content-Type": "application/json"
             }
@@ -310,8 +336,13 @@ export const actions = {
       return;
     }
   },
-  async removeShop({ commit }, data) {
-    const { userId, auth } = await this.$auth.$storage.getLocalStorage(
+  async removeShop({
+    commit
+  }, data) {
+    const {
+      userId,
+      auth
+    } = await this.$auth.$storage.getLocalStorage(
       "authenticated"
     );
     console.log(`ACTION DELETE ${userId} : ${data.shopId}`);
@@ -337,7 +368,9 @@ export const actions = {
       return;
     }
   },
-  pushMessageToLine({ commit }, data) {
+  pushMessageToLine({
+    commit
+  }, data) {
     return new Promise((resolve, reject) => {
       var infomation = {
         appId: data.appId,
@@ -355,9 +388,8 @@ export const actions = {
       this.$axios
         .$post(
           (process.env.NODE_ENV === "production" ? this.$config.BASE_URL : "") +
-            "/push-message",
-          infomation,
-          {
+          "/push-message",
+          infomation, {
             headers: {
               "Content-Type": "application/json"
             }
@@ -369,23 +401,24 @@ export const actions = {
         });
     });
   },
-  checkInThaichana({ commit }, data) {
+  checkInThaichana({
+    commit
+  }, data) {
     return new Promise(async (resolve, reject) => {
       var infomationAuth = {
         mobileNumber: data.mobileNumber
       };
 
       const auth_response = await fetch(
-        "https://api-scanner.thaichana.com/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "User-Agent": httpsAgent
-          },
-          body: JSON.stringify(infomationAuth)
-        }
-      )
+          "https://api-scanner.thaichana.com/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "User-Agent": httpsAgent
+            },
+            body: JSON.stringify(infomationAuth)
+          }
+        )
         .then(response => {
           if (response.ok) {
             return response.json();
@@ -403,19 +436,18 @@ export const actions = {
       };
 
       const response = await fetch(
-        `https://api-customer.thaichana.com/checkin?t=${moment()
+          `https://api-customer.thaichana.com/checkin?t=${moment()
           .tz("Asia/Bangkok")
-          .unix()}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + auth_response.token.trim(),
-            "User-Agent": httpsAgent
-          },
-          body: JSON.stringify(infomationCheckIn)
-        }
-      )
+          .unix()}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + auth_response.token.trim(),
+              "User-Agent": httpsAgent
+            },
+            body: JSON.stringify(infomationCheckIn)
+          }
+        )
         .then(response => {
           if (response.ok) {
             return response.json();
@@ -429,6 +461,36 @@ export const actions = {
         .catch(error => {
           reject(error);
         });
+    });
+  },
+  async changeAutoChecInOutState({
+    commit
+  }, data) {
+    return new Promise((resolve, reject) => {
+      const {
+        userId,
+        auth
+      } = await this.$auth.$storage.getLocalStorage(
+        "authenticated"
+      );
+      console.log(`ACTION DELETE ${userId} : ${data.shopId}`);
+      const thaichanaUserRef = this.$fire.firestore.collection("thaichana");
+      try {
+        const snapshotIsExists = await thaichanaUserRef
+          .where("userId", "==", userId)
+          .where("shopId", "==", data.shopId)
+          .get();
+
+        if (!snapshotIsExists.empty) {
+          snapshotIsExists.forEach(async doc => {
+            await doc.Update({
+              canAutoCheckinOut: !doc.canAutoCheckinOut
+            });
+          });
+        }
+      } catch (error) {
+        reject(error);
+      }
     });
   }
 };
