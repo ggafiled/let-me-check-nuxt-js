@@ -46,15 +46,19 @@
             <v-list-item-content>
               <v-list-item-title v-html="item.title"></v-list-item-title>
             </v-list-item-content>
-            <v-spacer></v-spacer>
+
             <v-switch
-              :value="item.canAutoCheckinOut"
+              :input-value="item.canAutoCheckinOut"
               label="AUTO"
               color="primary"
               class="mr-4"
               @change="changeAutoChecInOutState(item)"
             ></v-switch>
-            <button @click="checkInThaichana(item)" class="mr-4">
+            <button
+              v-show="item.isCheckIn === false"
+              @click="checkInThaichana(item)"
+              class="mr-4"
+            >
               <v-icon color="grey lighten-1">mdi-timeline-check-outline</v-icon>
             </button>
             <button @click="removeShop(item)">
@@ -130,36 +134,76 @@ export default {
       return params;
     },
     async checkInThaichana(item) {
-      item.mobileNumber =
-        this.$store.getters.getRegister.mobileNumber ||
-        "0" + Math.floor(Math.random() * 900000000) + 100000000;
-      await this.$store
-        .dispatch("checkInThaichana", item)
-        .then(async response => {
-          console.log(response);
-          if (response.message === "ok") {
-            await this.$store.dispatch("pushMessageToLine", item).then(data => {
-              if (data.message === "ok") {
-                this.$confirm({
-                  title: "แจ้งเตือน",
-                  message: `ระบบได้ทำการเช็คอินร้านค้า ${item.title} ให้คุณแล้วค่ะ`,
-                  button: {
-                    yes: "รับทราบ"
+      this.$confirm({
+        title: "ยืนยันเช็คอิน",
+        message: `คุณต้องการเช็คอินร้านค้า 💡${item.title} หรือไม่`,
+        button: {
+          yes: "ยืนยัน",
+          no: "ยกเลิก"
+        },
+        /**
+         * Callback Function
+         * @param {Boolean} confirm
+         */
+        callback: async confirm => {
+          if (confirm) {
+            item.mobileNumber =
+              this.$store.getters.getRegister.mobileNumber ||
+              "0" + Math.floor(Math.random() * 900000000) + 100000000;
+            console.log(item);
+            const isAlreadyCheckin = await this.$store.dispatch(
+              "checkIsAlreadyCheckin",
+              item
+            );
+
+            if (!isAlreadyCheckin.data().isCheckIn) {
+              await this.$store
+                .dispatch("checkInThaichana", item)
+                .then(async response => {
+                  console.log(response);
+                  if (response.message === "ok") {
+                    await this.$store.dispatch(
+                      "changeShopStatusToCheckin",
+                      item
+                    );
+                    await this.$store
+                      .dispatch("pushMessageToLine", item)
+                      .then(async data => {
+                        if (data.message === "ok") {
+                          this.$confirm({
+                            title: "แจ้งเตือน",
+                            message: `ระบบได้ทำการเช็คอินร้านค้า ${item.title} ให้คุณแล้วค่ะ`,
+                            button: {
+                              yes: "รับทราบ"
+                            }
+                          });
+                          await this.$store.dispatch("getThaichana");
+                        } else {
+                          this.$confirm({
+                            title: "มีบางอย่างผิดพลาด",
+                            message:
+                              "ขออภัยค่ะ มีบางอย่างผิดพลาดไม่สามารถเช็คอินได้ กรุณาลองใหม่อีกครั้ง",
+                            button: {
+                              yes: "รับทราบ"
+                            }
+                          });
+                        }
+                      });
                   }
                 });
-              } else {
-                this.$confirm({
-                  title: "มีบางอย่างผิดพลาด",
-                  message:
-                    "ขออภัยค่ะ มีบางอย่างผิดพลาดไม่สามารถเช็คอินได้ กรุณาลองใหม่อีกครั้ง",
-                  button: {
-                    yes: "รับทราบ"
-                  }
-                });
-              }
-            });
+            } else {
+              this.$confirm({
+                title: "ก่อนหน้านี้คุณได้ทำการ เช็คอิน ร้านค้านี้แล้ว",
+                message:
+                  "หากต้องการเช็คอินใหม่ กรุณาเช็คเอาท์ออกจากร้านค้าก่อนค่ะ",
+                button: {
+                  yes: "รับทราบ"
+                }
+              });
+            }
           }
-        });
+        }
+      });
     },
     async removeShop(item) {
       try {

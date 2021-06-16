@@ -155,6 +155,7 @@ export const actions = {
           status: childSnapshot.data().status,
           subcategory: childSnapshot.data().subcategory,
           title: childSnapshot.data().title,
+          isCheckIn: Boolean(childSnapshot.data().isCheckIn),
           canAutoCheckinOut: Boolean(childSnapshot.data().canAutoCheckinOut)
         });
       });
@@ -349,7 +350,7 @@ export const actions = {
         title: data.title,
         userId: data.userId,
         message: `ระบบได้ทำการเช็คอินร้านค้า ${data.title} ให้แล้วค่ะ`,
-        isCheckIn: true
+        isCheckIn: false
       };
 
       this.$axios
@@ -436,7 +437,7 @@ export const actions = {
       const { userId, auth } = await this.$auth.$storage.getLocalStorage(
         "authenticated"
       );
-      console.log(`ACTION DELETE ${userId} : ${data.shopId}`);
+      console.log(`ACTION changeAutoChecInOutState ${userId} : ${data.shopId}`);
       const thaichanaUserRef = this.$fire.firestore.collection("thaichana");
       try {
         const snapshotIsExists = await thaichanaUserRef
@@ -446,9 +447,63 @@ export const actions = {
 
         if (!snapshotIsExists.empty) {
           snapshotIsExists.forEach(async doc => {
-            await doc.Update({
-              canAutoCheckinOut: !doc.canAutoCheckinOut
+            await doc.ref.update({
+              canAutoCheckinOut: !Boolean(doc.data().canAutoCheckinOut)
             });
+            console.log(doc.data().canAutoCheckinOut);
+            resolve(doc);
+          });
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  async changeShopStatusToCheckin({ commit }, data) {
+    return new Promise(async (resolve, reject) => {
+      const { userId, auth } = await this.$auth.$storage.getLocalStorage(
+        "authenticated"
+      );
+      console.log(
+        `ACTION changeShopStatusToCheckin ${userId} : ${data.shopId}`
+      );
+      const thaichanaUserRef = this.$fire.firestore.collection("thaichana");
+      try {
+        const snapshotIsExists = await thaichanaUserRef
+          .where("userId", "==", userId)
+          .where("shopId", "==", data.shopId)
+          .get();
+
+        if (!snapshotIsExists.empty) {
+          snapshotIsExists.forEach(async doc => {
+            await doc.ref.update({
+              isCheckIn: true
+            });
+            console.log(doc.data().isCheckIn);
+            resolve(doc);
+          });
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  async checkIsAlreadyCheckin({ commit }, data) {
+    return new Promise(async (resolve, reject) => {
+      const { userId, auth } = await this.$auth.$storage.getLocalStorage(
+        "authenticated"
+      );
+      console.log(`ACTION checkIsAlreadyCheckin ${userId} : ${data.shopId}`);
+      const thaichanaUserRef = this.$fire.firestore.collection("thaichana");
+      try {
+        const snapshotIsExists = await thaichanaUserRef
+          .where("userId", "==", userId)
+          .where("shopId", "==", data.shopId)
+          .get();
+
+        if (!snapshotIsExists.empty) {
+          snapshotIsExists.forEach(async doc => {
+            resolve(doc);
           });
         }
       } catch (error) {
