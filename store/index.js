@@ -347,7 +347,9 @@ export const actions = {
         subcategory: data.subcategory,
         title: data.title,
         userId: data.userId,
-        message: `ระบบได้ทำการเช็คอินร้านค้า ${data.title} ให้แล้วค่ะ`,
+        message: `ระบบได้ทำการเช็ค ${
+          data.mode == "CI" ? "อิน" : "เอาท์"
+        } ร้านค้า ${data.title} ให้แล้วค่ะ`,
         isCheckIn: false
       };
 
