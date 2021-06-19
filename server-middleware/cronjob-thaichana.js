@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+var _ = require("lodash");
 var moment = require("moment");
 const bodyParser = require("body-parser");
 var admin = require("firebase-admin");
@@ -29,23 +30,11 @@ if (!admin.apps.length) {
 }
 
 app.get("/checkin", async (req, res) => {
-  let thaichanaDocs = await admin
-    .firestore()
-    .collection("thaichana")
-    .get();
-
-  var response = [];
-  await thaichanaDocs.docs.forEach(async doc => {
-    if (!doc.data().isCheckIn && doc.data().canAutoCheckinOut) {
-      response = await ThaichanaInstance.checkin(
-        doc.data().appId,
-        doc.data().shopId,
-        doc.data().userId,
-        true
-      );
-    }
+  let realData = await ThaichanaInstance.checkin();
+  return res.json({
+    status: "ok",
+    realData: realData
   });
-  return res.json({ status: "ok", req: req.body, response: response });
 });
 
 app.get("/checkout", async (req, res) => {
