@@ -12,7 +12,8 @@ export const state = () => ({
   },
   authenticated: {
     userId: "",
-    auth: false
+    auth: false,
+    generatedId: ""
   },
   register: {
     firstName: "",
@@ -20,7 +21,8 @@ export const state = () => ({
     gender: 1,
     email: "",
     mobileNumber: "",
-    position: ""
+    position: "",
+    generatedId: ""
   },
   thaichana: {
     myshop: []
@@ -93,10 +95,13 @@ export const actions = {
     commit("SET_LINE_PROFILE", data);
   },
   async checkIsRegisted({ commit }) {
+    const { userId, auth } = await this.$auth.$storage.getLocalStorage(
+      "authenticated"
+    );
     try {
       const profileRef = this.$fire.firestore.collection("/users");
       const snapshot = await profileRef
-        .where("userId", "==", this.state.profile.userId)
+        .where("userId", "==", this.state.profile.userId || userId)
         .get();
       if (snapshot.empty) {
         this.$auth.$storage.removeLocalStorage("authenticated");
@@ -105,14 +110,15 @@ export const actions = {
       }
 
       await snapshot.forEach(doc => {
-        console.log(doc.id, "=>", doc.data());
+        console.log("checkIsRegisted");
         commit("SET_REGISTER", doc.data());
       });
       await this.$auth.$storage.setLocalStorage(
         "authenticated",
         JSON.stringify({
           userId: this.state.profile.userId,
-          auth: true
+          auth: true,
+          generatedId: this.state.register.generatedId
         })
       );
 
@@ -211,14 +217,7 @@ export const actions = {
         });
         try {
           var infomation = {
-            appId: data.appId,
-            businessType: data.businessType,
-            canCheckin: data.canCheck,
-            shopId: data.shopId,
-            status: data.status,
-            subcategory: data.subcategory,
-            title: data.title,
-            userId: data.userId,
+            ...data,
             message: `ระบบได้ทำการบันทึกร้านค้า ${data.title} ให้แล้วค่ะ`,
             isCheckIn: false,
             canAutoCheckinOut: false
@@ -262,11 +261,12 @@ export const actions = {
   },
   initialiseStore({ commit }) {
     if (this.$auth.$storage.getLocalStorage("authenticated")) {
-      const { userId, auth } = JSON.parse(
+      const { userId, auth, generatedId } = JSON.parse(
         JSON.stringify(this.$auth.$storage.getLocalStorage("authenticated"))
       );
       commit("SET_INIT_STORE", {
         userId: userId,
+        generatedId: generatedId,
         auth: Boolean(auth)
       });
     }
@@ -275,16 +275,14 @@ export const actions = {
     const profileRef = this.$fire.firestore.collection("/users");
 
     try {
+      const responseRegisterUserToThaichana = await dispatch(
+        "registerUserToThaichana",
+        data
+      );
+      data.generatedId = responseRegisterUserToThaichana.generatedId;
       await profileRef.doc().set(data);
       var infomation = {
-        appId: data.appId,
-        businessType: data.businessType,
-        canCheckin: data.canCheck,
-        shopId: data.shopId,
-        status: data.status,
-        subcategory: data.subcategory,
-        title: data.title,
-        userId: data.userId,
+        ...data,
         message: `ลงทะเบียนเรียบร้อย ท่านสามารถเพิ่มร้านค้าได้แล้วตอนนี้`,
         isCheckIn: false
       };
@@ -370,33 +368,51 @@ export const actions = {
         });
     });
   },
-  checkInThaichana({ commit }, data) {
+  checkInThaichana({ commit, dispatch }, data) {
     return new Promise(async (resolve, reject) => {
+      const { userId, auth, generatedId } = JSON.parse(
+        JSON.stringify(this.$auth.$storage.getLocalStorage("authenticated"))
+      );
+
+      console.log(`ทำการเช็คอินไทยชนะของ ${generatedId} ที่ ${data.title}`);
+
+      const profileRef = this.$fire.firestore.collection("/users");
+      const snapshot = await profileRef.where("userId", "==", userId).get();
+
       var infomationAuth = {
-        mobileNumber: data.mobileNumber
+        generatedId: ""
       };
 
-      const auth_response = await fetch(
-        "https://api-scanner.thaichana.com/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "User-Agent": httpsAgent
-          },
-          body: JSON.stringify(infomationAuth)
-        }
-      )
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            throw new Error("Something went wrong");
+      await snapshot.forEach(doc => {
+        infomationAuth.generatedId = doc.data().generatedId;
+      });
+
+      let auth_response;
+      if (generatedId) {
+        auth_response = await fetch(
+          "https://api-scanner.thaichana.com/usertoken",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "User-Agent": httpsAgent
+            },
+            body: JSON.stringify(infomationAuth)
           }
-        })
-        .catch(error => {
-          reject(error);
-        });
+        )
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error("Something went wrong");
+            }
+          })
+          .catch(error => {
+            reject(error);
+          });
+      } else {
+        dispatch("checkIsRegisted");
+      }
 
       var infomationCheckIn = {
         appId: data.appId,
@@ -432,12 +448,92 @@ export const actions = {
         });
     });
   },
-  async changeAutoChecInOutState({ commit }, data) {
+  checkOutThaichana({ commit, dispatch }, data) {
+    return new Promise(async (resolve, reject) => {
+      const { userId, auth, generatedId } = JSON.parse(
+        JSON.stringify(this.$auth.$storage.getLocalStorage("authenticated"))
+      );
+
+      console.log(`ทำการเช็คเอาท์ไทยชนะของ ${generatedId} ที่ ${data.title}`);
+
+      const profileRef = this.$fire.firestore.collection("/users");
+      const snapshot = await profileRef.where("userId", "==", userId).get();
+
+      var infomationAuth = {
+        generatedId: ""
+      };
+
+      await snapshot.forEach(doc => {
+        infomationAuth.generatedId = doc.data().generatedId;
+      });
+
+      let auth_response;
+      if (generatedId) {
+        auth_response = await fetch(
+          "https://api-scanner.thaichana.com/usertoken",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "User-Agent": httpsAgent
+            },
+            body: JSON.stringify(infomationAuth)
+          }
+        )
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error("Something went wrong");
+            }
+          })
+          .catch(error => {
+            reject(error);
+          });
+      } else {
+        dispatch("checkIsRegisted");
+      }
+
+      var infomationcheckOut = {
+        appId: data.appId,
+        shopId: data.shopId
+      };
+
+      const response = await fetch(
+        `https://api-customer.thaichana.com/checkout?t=${moment()
+          .tz("Asia/Bangkok")
+          .unix()}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + auth_response.token.trim(),
+            "User-Agent": httpsAgent
+          },
+          body: JSON.stringify(infomationcheckOut)
+        }
+      )
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error("Something went wrong");
+          }
+        })
+        .then(responseJson => {
+          resolve(responseJson);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  },
+  async changeAutoModeState({ commit }, data) {
     return new Promise(async (resolve, reject) => {
       const { userId, auth } = await this.$auth.$storage.getLocalStorage(
         "authenticated"
       );
-      console.log(`ACTION changeAutoChecInOutState ${userId} : ${data.shopId}`);
+      console.log(`ACTION changeAutoModeState ${userId} : ${data.shopId}`);
       const thaichanaUserRef = this.$fire.firestore.collection("thaichana");
       try {
         const snapshotIsExists = await thaichanaUserRef
@@ -509,6 +605,32 @@ export const actions = {
       } catch (error) {
         reject(error);
       }
+    });
+  },
+  async registerUserToThaichana({ commit }, data) {
+    return new Promise(async (resolve, reject) => {
+      var infomationAuth = {
+        mobileNumber: data.mobileNumber
+      };
+
+      await fetch("https://api-scanner.thaichana.com/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": httpsAgent
+        },
+        body: JSON.stringify(infomationAuth)
+      })
+        .then(response => {
+          if (response.ok) {
+            resolve(response.json());
+          } else {
+            throw new Error("Something went wrong");
+          }
+        })
+        .catch(error => {
+          reject(error);
+        });
     });
   }
 };

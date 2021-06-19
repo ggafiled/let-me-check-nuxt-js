@@ -55,11 +55,18 @@
               @change="changeAutoChecInOutState(item)"
             ></v-switch>
             <button
-              v-show="item.isCheckIn === false"
+              v-show="!item.isCheckIn"
               @click="checkInThaichana(item)"
               class="mr-4"
             >
               <v-icon color="grey lighten-1">mdi-timeline-check-outline</v-icon>
+            </button>
+            <button
+              v-show="item.isCheckIn"
+              @click="checkOutThaichana(item)"
+              class="mr-4"
+            >
+              <v-icon color="grey lighten-1">mdi-exit-to-app</v-icon>
             </button>
             <button @click="removeShop(item)">
               <v-icon color="grey lighten-1">mdi-trash-can-outline</v-icon>
@@ -205,6 +212,67 @@ export default {
         }
       });
     },
+    async checkOutThaichana(item) {
+      this.$confirm({
+        title: "ต้องการเช็คเอาท์ใช่หรือไม่?",
+        message: `คุณต้องการเช็คเอาท์ร้านค้า 💡${item.title} หรือไม่`,
+        button: {
+          yes: "ยืนยัน",
+          no: "ยกเลิก"
+        },
+        /**
+         * Callback Function
+         * @param {Boolean} confirm
+         */
+        callback: async confirm => {
+          if (confirm) {
+            const isAlreadyCheckin = await this.$store.dispatch(
+              "checkIsAlreadyCheckin",
+              item
+            );
+            console.log(isAlreadyCheckin);
+            if (isAlreadyCheckin.data().isCheckIn) {
+              await this.$store
+                .dispatch("checkOutThaichana", item)
+                .then(async response => {
+                  console.log(response);
+                  if (response.message === "ok") {
+                    await this.$store.dispatch(
+                      "changeShopStatusToCheckin",
+                      item
+                    );
+                    await this.$store
+                      .dispatch("pushMessageToLine", item)
+                      .then(async data => {
+                        if (data.message === "ok") {
+                          this.$confirm({
+                            title: "แจ้งเตือน",
+                            message: `ระบบได้ทำการเช็คเอาท์ร้านค้า ${item.title} ให้คุณแล้วค่ะ`,
+                            button: {
+                              yes: "รับทราบ"
+                            }
+                          });
+                          await this.$store.dispatch("getThaichana");
+                        } else {
+                          this.$confirm({
+                            title: "มีบางอย่างผิดพลาด",
+                            message:
+                              "ขออภัยค่ะ มีบางอย่างผิดพลาดไม่สามารถเช็คเอาท์ได้ กรุณาลองใหม่อีกครั้ง",
+                            button: {
+                              yes: "รับทราบ"
+                            }
+                          });
+                        }
+                      });
+                  }
+                });
+            } else {
+              console.log("Can't checkout");
+            }
+          }
+        }
+      });
+    },
     async removeShop(item) {
       try {
         this.$confirm({
@@ -286,7 +354,7 @@ export default {
       liff.closeWindow();
     },
     async changeAutoChecInOutState(item) {
-      await this.$store.dispatch("changeAutoChecInOutState", item);
+      await this.$store.dispatch("changeAutoModeState", item);
       await this.$store.dispatch("getThaichana");
     }
   },
