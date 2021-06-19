@@ -95,13 +95,10 @@ export const actions = {
     commit("SET_LINE_PROFILE", data);
   },
   async checkIsRegisted({ commit }) {
-    const { userId, auth } = await this.$auth.$storage.getLocalStorage(
-      "authenticated"
-    );
     try {
       const profileRef = this.$fire.firestore.collection("/users");
       const snapshot = await profileRef
-        .where("userId", "==", this.state.profile.userId || userId)
+        .where("userId", "==", this.state.profile.userId)
         .get();
       if (snapshot.empty) {
         this.$auth.$storage.removeLocalStorage("authenticated");
