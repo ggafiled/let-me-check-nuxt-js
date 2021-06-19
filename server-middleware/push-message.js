@@ -31,8 +31,7 @@ app.post("/", async (req, res) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization:
-        "Bearer kS33WAWpGOQmSABYZ6/jGpT8YP4YvEaALbGm3ldNlqdibzji0cR1xCm1hJ1Ofcd8ICy3rvqayw4qNWtsiDHBZYxzWzL35+27G5coSZxOxT8S3ZbyU2vJqnV9jZHNY+//0Z4tluhOfV39LAQ/4oiguQdB04t89/1O/w1cDnyilFU=" //+ process.env.CHANNEL_ACCESS_TOKEN
+      Authorization: "Bearer " + process.env.CHANNEL_ACCESS_TOKEN
     },
     body: JSON.stringify(
       generateMessageStructure(
