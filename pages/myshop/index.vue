@@ -240,7 +240,7 @@ export default {
                   console.log(response);
                   if (response.message === "ok") {
                     await this.$store.dispatch(
-                      "changeShopStatusToCheckin",
+                      "changeShopStatusToCheckout",
                       item
                     );
                     await this.$store

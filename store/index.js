@@ -583,6 +583,35 @@ export const actions = {
       }
     });
   },
+  async changeShopStatusToCheckout({ commit }, data) {
+    return new Promise(async (resolve, reject) => {
+      const { userId, auth } = await this.$auth.$storage.getLocalStorage(
+        "authenticated"
+      );
+      console.log(
+        `ACTION changeShopStatusToCheckout ${userId} : ${data.shopId}`
+      );
+      const thaichanaUserRef = this.$fire.firestore.collection("thaichana");
+      try {
+        const snapshotIsExists = await thaichanaUserRef
+          .where("userId", "==", userId)
+          .where("shopId", "==", data.shopId)
+          .get();
+
+        if (!snapshotIsExists.empty) {
+          snapshotIsExists.forEach(async doc => {
+            await doc.ref.update({
+              isCheckIn: false
+            });
+            console.log(doc.data().isCheckIn);
+            resolve(doc);
+          });
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
   async checkIsAlreadyCheckin({ commit }, data) {
     return new Promise(async (resolve, reject) => {
       const { userId, auth } = await this.$auth.$storage.getLocalStorage(
