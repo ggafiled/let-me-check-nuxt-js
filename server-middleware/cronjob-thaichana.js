@@ -30,11 +30,19 @@ if (!admin.apps.length) {
 }
 
 app.get("/checkin", async (req, res) => {
-  let realData = await ThaichanaInstance.checkin();
-  return res.json({
-    status: "ok",
-    realData: realData
-  });
+  try {
+    let realData = await ThaichanaInstance.checkin();
+    return res.json({
+      status: "ok",
+      realData: realData
+    });
+  } catch (error) {
+    return res.json({
+      status: "fail",
+      realData: [],
+      message: error.message
+    });
+  }
 });
 
 app.get("/checkout", async (req, res) => {
