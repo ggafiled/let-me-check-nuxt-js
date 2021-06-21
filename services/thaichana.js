@@ -40,8 +40,8 @@ class Thaichana {
               await this.callCheckinAPI(auth_response.token, item).then(
                 async result => {
                   item.mode = "CI";
-                  await this.pushLineMessage(item);
-                  await this.updateShopStatusOnDB(item, true);
+                  // await this.pushLineMessage(item);
+                  // await this.updateShopStatusOnDB(item, true);
                   responseCheckin.push(result);
                 }
               );
@@ -93,6 +93,7 @@ class Thaichana {
       let usertoken = await fetch(
         "https://api-scanner.thaichana.com/usertoken",
         {
+          credentials: "include",
           method: "POST",
           headers: {
             "Access-Control-Allow-Origin": "*",
