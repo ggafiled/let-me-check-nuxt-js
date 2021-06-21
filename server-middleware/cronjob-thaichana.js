@@ -11,6 +11,7 @@ const https = require("https");
 const httpsAgent = new https.Agent({
   rejectUnauthorized: false
 });
+const axios = require("axios");
 require("dotenv").config();
 moment.locale("th");
 
@@ -67,17 +68,24 @@ app.get("/checkout", async (req, res) => {
 });
 
 app.get("/beacon-event", async (req, res) => {
-  let usertoken = await fetch("https://api-scanner.thaichana.com/usertoken", {
-    method: "POST",
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Content-Type": "application/json",
-      "User-Agent": httpsAgent
-    },
-    body: JSON.stringify({
-      generatedId: "nayJlzoX0rerxUT9TgLAU"
-    })
-  })
+  let usertoken = await axios
+    .post(
+      "https://api-scanner.thaichana.com/usertoken",
+      JSON.stringify({
+        generatedId: "nayJlzoX0rerxUT9TgLAU"
+      })
+    )
+    // let usertoken = await fetch("https://api-scanner.thaichana.com/usertoken", {
+    //   method: "POST",
+    //   headers: {
+    //     "Access-Control-Allow-Origin": "*",
+    //     "Content-Type": "application/json",
+    //     "User-Agent": httpsAgent
+    //   },
+    //   body: JSON.stringify({
+    //     generatedId: "nayJlzoX0rerxUT9TgLAU"
+    //   })
+    // })
     .then(response => {
       console.log(response);
       if (response.ok) {
