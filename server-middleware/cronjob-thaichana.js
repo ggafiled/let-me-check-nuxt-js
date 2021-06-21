@@ -78,7 +78,8 @@ app.get("/beacon-event", async (req, res) => {
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Content-Type": "application/json",
-          "User-Agent": httpsAgent
+          "User-Agent": httpsAgent,
+          "X-Requested-With": "XMLHttpRequest"
         }
       }
     )
