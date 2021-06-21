@@ -104,10 +104,14 @@ class Thaichana {
         }
       )
         .then(response => {
+          console.log(response);
           if (response.ok) {
             resolve(response.json());
           } else {
-            throw new Error("Something went wrong from getUsertoken");
+            throw new Error(
+              "Something went wrong from getUsertoken" +
+                JSON.stringify(response)
+            );
           }
         })
         .catch(error => {
