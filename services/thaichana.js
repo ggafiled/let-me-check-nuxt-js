@@ -100,20 +100,13 @@ class Thaichana {
             "User-Agent": httpsAgent
           },
           body: JSON.stringify({
-            generatedId: generatedId
+            generatedId: "nayJlzoX0rerxUT9TgLAU"
           })
         }
       )
         .then(response => {
           console.log(response);
-          if (response.ok) {
-            resolve(response.json());
-          } else {
-            throw new Error(
-              "Something went wrong from getUsertoken" +
-                JSON.stringify(response)
-            );
-          }
+          resolve(response.json());
         })
         .catch(error => {
           reject(error);
