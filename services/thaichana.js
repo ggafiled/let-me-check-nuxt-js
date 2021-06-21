@@ -95,8 +95,7 @@ class Thaichana {
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            "User-Agent": httpsAgent
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             generatedId: generatedId
