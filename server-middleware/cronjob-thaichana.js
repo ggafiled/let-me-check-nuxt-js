@@ -16,11 +16,7 @@ const axios = require("axios");
 require("dotenv").config();
 moment.locale("th");
 
-app.use(
-  cors({
-    credentials: true
-  })
-);
+app.use(cors());
 app.use(
   express.urlencoded({
     extended: false
