@@ -96,10 +96,8 @@ class Thaichana {
           credentials: "include",
           method: "POST",
           headers: {
-            "Access-Control-Allow-Origin": "*",
             "Content-Type": "application/json",
-            "User-Agent": httpsAgent,
-            "X-Requested-With": "XMLHttpRequest"
+            "User-Agent": httpsAgent
           },
           body: JSON.stringify({
             generatedId: generatedId
