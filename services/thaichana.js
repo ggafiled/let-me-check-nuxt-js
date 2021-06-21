@@ -2,17 +2,11 @@ var admin = require("firebase-admin");
 var _ = require("lodash");
 var moment = require("moment-timezone");
 var fetch = require("node-fetch");
-const line = require("@line/bot-sdk");
 const https = require("https");
 const httpsAgent = new https.Agent({
   rejectUnauthorized: false
 });
 require("dotenv").config();
-
-const config = {
-  channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
-  channelSecret: process.env.CHANNEL_SECRET
-};
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -27,7 +21,6 @@ if (!admin.apps.length) {
   admin.app();
 }
 
-const client = new line.Client(config);
 const db = admin.firestore();
 
 class Thaichana {
@@ -114,7 +107,7 @@ class Thaichana {
           if (response.ok) {
             resolve(response.json());
           } else {
-            throw new Error("Something went wrong");
+            throw new Error("Something went wrong from getUsertoken");
           }
         })
         .catch(error => {
@@ -129,13 +122,39 @@ class Thaichana {
         item.mode == "CI" ? "อิน" : "เอาท์"
       } ร้านค้า ${item.title} ให้แล้วค่ะ`;
 
-      try {
-        let response = client.pushMessage(item.userId, message);
-        resolve(response);
-      } catch (error) {
-        reject(error);
-      }
+      let response = await fetch("https://api.line.me/v2/bot/message/push", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + process.env.CHANNEL_ACCESS_TOKEN
+        },
+        body: JSON.stringify(
+          this.generateMessageStructure(
+            item.userId,
+            `${message} ในช่วงเวลา ${moment()
+              .tz("Asia/Bangkok")
+              .format("HH:mm")}`
+          )
+        )
+      })
+        .then(response => resolve(response.json()))
+        .catch(error => {
+          reject(error);
+        });
     });
+  }
+
+  generateMessageStructure(to, message) {
+    let template = {
+      to: to,
+      messages: [
+        {
+          type: "text",
+          text: message
+        }
+      ]
+    };
+    return template;
   }
 
   callCheckinAPI(token, item) {
@@ -162,7 +181,7 @@ class Thaichana {
             item.isCheckIn = true;
             return resolve(item);
           } else {
-            throw new Error("Something went wrong");
+            throw new Error("Something went wrong from callCheckinAPI");
           }
         })
         .catch(error => {
@@ -195,7 +214,7 @@ class Thaichana {
             item.isCheckIn = false;
             return resolve(item);
           } else {
-            throw new Error("Something went wrong");
+            throw new Error("Something went wrong from callCheckoutAPI");
           }
         })
         .catch(error => {
