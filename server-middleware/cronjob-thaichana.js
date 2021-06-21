@@ -4,6 +4,7 @@ var _ = require("lodash");
 var moment = require("moment");
 const bodyParser = require("body-parser");
 var admin = require("firebase-admin");
+var fetch = require("node-fetch");
 import Thaichana from "../services/thaichana";
 const ThaichanaInstance = new Thaichana();
 require("dotenv").config();
