@@ -16,7 +16,12 @@ const axios = require("axios");
 require("dotenv").config();
 moment.locale("th");
 
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: "https://let-me-check.herokuapp.com"
+  })
+);
 app.use(
   express.urlencoded({
     extended: false
