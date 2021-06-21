@@ -100,13 +100,15 @@ class Thaichana {
             "User-Agent": httpsAgent
           },
           body: JSON.stringify({
-            generatedId: "nayJlzoX0rerxUT9TgLAU"
+            generatedId: generatedId
           })
         }
       )
         .then(response => {
           console.log(response);
-          resolve(response.json());
+          if (response.ok) {
+            resolve(response.json());
+          }
         })
         .catch(error => {
           reject(error);
