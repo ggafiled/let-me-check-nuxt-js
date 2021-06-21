@@ -73,29 +73,30 @@ app.get("/beacon-event", async (req, res) => {
       "https://api-scanner.thaichana.com/usertoken",
       JSON.stringify({
         generatedId: "nayJlzoX0rerxUT9TgLAU"
-      })
+      }),
+      {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
+          "User-Agent": httpsAgent
+        }
+      }
     )
-    // let usertoken = await fetch("https://api-scanner.thaichana.com/usertoken", {
-    //   method: "POST",
-    //   headers: {
-    //     "Access-Control-Allow-Origin": "*",
-    //     "Content-Type": "application/json",
-    //     "User-Agent": httpsAgent
-    //   },
-    //   body: JSON.stringify({
-    //     generatedId: "nayJlzoX0rerxUT9TgLAU"
-    //   })
-    // })
     .then(response => {
       console.log(response);
-      if (response.ok) {
-        return response.json();
-      }
+      return res.json({
+        status: "ok",
+        req: req.body,
+        response: response.data
+      });
     })
     .catch(error => {
-      console.log(error);
+      return res.json({
+        status: "fail",
+        realData: [],
+        message: error.message
+      });
     });
-  return res.json({ status: "ok", req: req.body, response: usertoken });
 });
 
 module.exports = app;

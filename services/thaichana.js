@@ -90,28 +90,23 @@ class Thaichana {
 
   getUsertoken(generatedId) {
     return new Promise(async (resolve, reject) => {
-      let usertoken = await fetch(
-        "https://api-scanner.thaichana.com/usertoken",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
+      let usertoken = await axios
+        .post(
+          "https://api-scanner.thaichana.com/usertoken",
+          JSON.stringify({
             generatedId: generatedId
-          })
-        }
-      )
+          }),
+          {
+            headers: {
+              "Access-Control-Allow-Origin": "*",
+              "Content-Type": "application/json",
+              "User-Agent": httpsAgent
+            }
+          }
+        )
         .then(response => {
           console.log(response);
-          if (response.ok) {
-            resolve(response.json());
-          } else {
-            throw new Error(
-              "Something went wrong from getUsertoken" +
-                JSON.stringify(response)
-            );
-          }
+          resolve(response.data);
         })
         .catch(error => {
           reject(error);
