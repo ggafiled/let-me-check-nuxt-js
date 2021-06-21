@@ -7,6 +7,10 @@ var admin = require("firebase-admin");
 var fetch = require("node-fetch");
 import Thaichana from "../services/thaichana";
 const ThaichanaInstance = new Thaichana();
+const https = require("https");
+const httpsAgent = new https.Agent({
+  rejectUnauthorized: false
+});
 require("dotenv").config();
 moment.locale("th");
 
@@ -66,7 +70,9 @@ app.get("/beacon-event", async (req, res) => {
   let usertoken = await fetch("https://api-scanner.thaichana.com/usertoken", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
+      "User-Agent": httpsAgent
     },
     body: JSON.stringify({
       generatedId: "nayJlzoX0rerxUT9TgLAU"
