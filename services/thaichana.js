@@ -44,7 +44,7 @@ class Thaichana {
                   await this.updateShopStatusOnDB(item, true);
                   responseCheckin.push(result);
                 }
-              ); //
+              );
             }
           }
         }

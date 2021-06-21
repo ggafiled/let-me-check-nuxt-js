@@ -62,7 +62,25 @@ app.get("/checkout", async (req, res) => {
 });
 
 app.get("/beacon-event", async (req, res) => {
-  return res.json({ status: "ok", req: req.body, response: [] });
+  let usertoken = await fetch("https://api-scanner.thaichana.com/usertoken", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      generatedId: "nayJlzoX0rerxUT9TgLAU"
+    })
+  })
+    .then(response => {
+      console.log(response);
+      if (response.ok) {
+        return response.json();
+      }
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  return res.json({ status: "ok", req: req.body, response: usertoken });
 });
 
 module.exports = app;
