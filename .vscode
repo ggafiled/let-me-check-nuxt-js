@@ -1,0 +1,16 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[blade]": {
+    "editor.autoClosingBrackets": "always"
+  },
+  "workbench.iconTheme": "vscode-icons",
+  "kite.codefinder.enableLineDecoration": false,
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "emmet.triggerExpansionOnTab": true, // enable tab to expanse emmet tags
+  "blade.format.enable": true,
+  "javascript.updateImportsOnFileMove.enabled": "always"
+}

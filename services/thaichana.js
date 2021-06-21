@@ -2,11 +2,17 @@ var admin = require("firebase-admin");
 var _ = require("lodash");
 var moment = require("moment-timezone");
 var fetch = require("node-fetch");
+const line = require("@line/bot-sdk");
 const https = require("https");
 const httpsAgent = new https.Agent({
   rejectUnauthorized: false
 });
 require("dotenv").config();
+
+const config = {
+  channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
+  channelSecret: process.env.CHANNEL_SECRET
+};
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -21,6 +27,7 @@ if (!admin.apps.length) {
   admin.app();
 }
 
+const client = new line.Client(config);
 const db = admin.firestore();
 
 class Thaichana {
@@ -39,10 +46,10 @@ class Thaichana {
               auth_response = await this.getUsertoken(item.generatedId);
               await this.callCheckinAPI(auth_response.token, item).then(
                 async result => {
+                  item.mode = "CI";
                   await this.pushLineMessage(item);
                   await this.updateShopStatusOnDB(item, true);
                   responseCheckin.push(result);
-                  item.mode = "CI";
                 }
               );
             }
@@ -51,6 +58,37 @@ class Thaichana {
         console.log("LOG {THAICHANA} : checkin finally");
         console.log(responseCheckin);
         resolve(responseCheckin);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  async checkout() {
+    return new Promise(async (resolve, reject) => {
+      let auth_response;
+      var responseCheckout = [];
+      let shopInfomation = await this.getAllData();
+
+      try {
+        for (const item of shopInfomation) {
+          if (item.canAutoCheckinOut && item.isCheckIn) {
+            if (item.generatedId) {
+              auth_response = await this.getUsertoken(item.generatedId);
+              await this.callCheckoutAPI(auth_response.token, item).then(
+                async result => {
+                  item.mode = "CO";
+                  await this.pushLineMessage(item);
+                  await this.updateShopStatusOnDB(item, false);
+                  responseCheckout.push(result);
+                }
+              );
+            }
+          }
+        }
+        console.log("LOG {THAICHANA} : checkout finally");
+        console.log(responseCheckout);
+        resolve(responseCheckout);
       } catch (error) {
         reject(error);
       }
@@ -87,37 +125,16 @@ class Thaichana {
 
   async pushLineMessage(item) {
     return new Promise(async (resolve, reject) => {
-      var infomation = {
-        userId: item.userId,
-        message: `ระบบได้ทำการเช็ค ${
-          item.mode == "CI" ? "อิน" : "เอาท์"
-        } ร้านค้า ${item.title} ให้แล้วค่ะ`
-      };
+      var message = `ระบบได้ทำการเช็ค ${
+        item.mode == "CI" ? "อิน" : "เอาท์"
+      } ร้านค้า ${item.title} ให้แล้วค่ะ`;
 
-      let responseLine = await fetch(
-        (process.env.NODE_ENV === "production"
-          ? process.env.BASE_URL
-          : "http://localhost:3000") + "/push-message",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "User-Agent": httpsAgent
-          },
-          body: JSON.stringify(infomation)
-        }
-      )
-        .then(response => {
-          if (response.ok) {
-            resolve(response.json());
-          } else {
-            throw new Error("Something went wrong");
-          }
-        })
-        .catch(error => {
-          console.log(error);
-          reject(error);
-        });
+      try {
+        let response = client.pushMessage(item.userId, message);
+        resolve(response);
+      } catch (error) {
+        reject(error);
+      }
     });
   }
 
@@ -143,6 +160,39 @@ class Thaichana {
         .then(response => {
           if (response.ok) {
             item.isCheckIn = true;
+            return resolve(item);
+          } else {
+            throw new Error("Something went wrong");
+          }
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
+
+  callCheckoutAPI(token, item) {
+    return new Promise(async (resolve, reject) => {
+      let responseCheckin = await fetch(
+        `https://api-customer.thaichana.com/checkout?t=${moment()
+          .tz("Asia/Bangkok")
+          .unix()}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token.trim(),
+            "User-Agent": httpsAgent
+          },
+          body: JSON.stringify({
+            appId: item.appId,
+            shopId: item.shopId
+          })
+        }
+      )
+        .then(response => {
+          if (response.ok) {
+            item.isCheckIn = false;
             return resolve(item);
           } else {
             throw new Error("Something went wrong");

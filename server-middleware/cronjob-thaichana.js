@@ -46,16 +46,19 @@ app.get("/checkin", async (req, res) => {
 });
 
 app.get("/checkout", async (req, res) => {
-  let thaichanaDocs = await admin
-    .firestore()
-    .collection("thaichana")
-    .get();
-
-  let response = [];
-  thaichanaDocs.docs.forEach(doc => {
-    response.push(doc.data());
-  });
-  return res.json({ status: "ok", req: req.body, response: thaichanaDocs });
+  try {
+    let realData = await ThaichanaInstance.checkout();
+    return res.json({
+      status: "ok",
+      realData: realData
+    });
+  } catch (error) {
+    return res.json({
+      status: "fail",
+      realData: [],
+      message: error.message
+    });
+  }
 });
 
 app.get("/beacon-event", async (req, res) => {
