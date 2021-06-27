@@ -39,15 +39,15 @@ Cronjob ที่มีบริการมาให้พร้อม
 
 ### ตัวอย่างหน้าจอการใช้งาน LIFF
 
-![](https://raw.githubusercontent.com/ggafiled/let-me-check-nuxt-js/main/static/img/reviews_0.jpg | width=100)
+<img src="https://raw.githubusercontent.com/ggafiled/let-me-check-nuxt-js/main/static/img/reviews_0.jpg" width="200" height="400" alt="Let me check bot">
 
-<img src="https://raw.githubusercontent.com/ggafiled/let-me-check-nuxt-js/main/static/img/reviews_1.jpg" alt="Let me check bot">
+<img src="https://raw.githubusercontent.com/ggafiled/let-me-check-nuxt-js/main/static/img/reviews_1.jpg" width="200" height="400" alt="Let me check bot">
 
-<img src="https://raw.githubusercontent.com/ggafiled/let-me-check-nuxt-js/main/static/img/reviews_2.jpg" alt="Let me check bot">
+<img src="https://raw.githubusercontent.com/ggafiled/let-me-check-nuxt-js/main/static/img/reviews_2.jpg" width="200" height="400" alt="Let me check bot">
 
-<img src="https://raw.githubusercontent.com/ggafiled/let-me-check-nuxt-js/main/static/img/reviews_3.jpg" alt="Let me check bot">
+<img src="https://raw.githubusercontent.com/ggafiled/let-me-check-nuxt-js/main/static/img/reviews_3.jpg" width="200" height="400" alt="Let me check bot">
 
-<img src="https://raw.githubusercontent.com/ggafiled/let-me-check-nuxt-js/main/static/img/reviews_4.jpg" alt="Let me check bot">
+<img src="https://raw.githubusercontent.com/ggafiled/let-me-check-nuxt-js/main/static/img/reviews_4.jpg" width="200" height="400" alt="Let me check bot">
 
 # Copyright 🏛
 
