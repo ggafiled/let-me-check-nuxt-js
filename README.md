@@ -39,7 +39,7 @@ Cronjob ที่มีบริการมาให้พร้อม
 
 ### ตัวอย่างหน้าจอการใช้งาน LIFF
 
-<img src="https://raw.githubusercontent.com/ggafiled/let-me-check-nuxt-js/main/static/img/reviews_0.jpg" alt="Let me check bot">
+![](https://raw.githubusercontent.com/ggafiled/let-me-check-nuxt-js/main/static/img/reviews_0.jpg | width=100)
 
 <img src="https://raw.githubusercontent.com/ggafiled/let-me-check-nuxt-js/main/static/img/reviews_1.jpg" alt="Let me check bot">
 
